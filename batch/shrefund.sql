@@ -197,7 +197,7 @@ AND A.PAY_YM=(
      AND cal_tax_method  = 'B'
      AND pay_ym          = TO_CHAR(SYSDATE, 'YYYYMM')
 )
-AND (A.COM_AMT IS NOT NULL OR A.COM_AMT = 0)
+AND (A.COM_AMT IS NOT NULL OR A.COM_AMT != 0)
 AND A.SABUN not IN (SELECT B.SABUN FROM TBEN631 B
             WHERE B.PAY_STS='P'
             AND B.ENTER_CD=A.ENTER_CD)
