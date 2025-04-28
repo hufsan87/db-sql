@@ -1,0 +1,34 @@
+[사번별 발령사항 조회 (발령 기간 LAG처리)]
+SELECT *
+FROM (
+  SELECT 
+    A.ENTER_CD,
+    A.SABUN,
+    A.SDATE,
+    
+    -- 다음 상태 시작일 -1 → 현재 상태의 종료일로 간주
+    NVL(TO_CHAR(
+      TO_DATE((
+        SELECT MIN(B.SDATE)
+        FROM THRM151 B
+        WHERE B.ENTER_CD = A.ENTER_CD
+          AND B.SABUN = A.SABUN
+          AND B.SDATE > A.SDATE
+          AND B.STATUS_CD != A.STATUS_CD
+      ), 'YYYYMMDD') - 1, 'YYYYMMDD'
+    ), '99991231') AS EDATE2,
+
+    A.EDATE,
+    A.STATUS_CD,
+
+    LAG(A.STATUS_CD) OVER (
+      PARTITION BY A.ENTER_CD, A.SABUN 
+      ORDER BY A.SDATE
+    ) AS PREV_STATUS_CD
+
+  FROM THRM151 A
+  WHERE A.ENTER_CD = 'HX'
+    AND A.SABUN = '20120026'
+)
+WHERE STATUS_CD != PREV_STATUS_CD OR PREV_STATUS_CD IS NULL
+ORDER BY EDATE DESC;
