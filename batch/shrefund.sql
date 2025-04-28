@@ -34,7 +34,7 @@ WHERE STATUS_CD != PREV_STATUS_CD OR PREV_STATUS_CD IS NULL
 ORDER BY EDATE DESC;
 
 
-[HX, 신협 상태변경 배치 프로시저 생성]
+--[HX, 신협 상태변경 배치 프로시저 생성]
 CREATE OR REPLACE PROCEDURE P_BEN_MTH_SHFUND_BATCH IS
   -- OUT 파라미터를 받을 변수들
   v_sqlcode           VARCHAR2(10);
@@ -81,8 +81,8 @@ END;
 /
 
 
-[HX, 신협 상태변경 배치 등록]
-(JOB 등록)
+--[HX, 신협 상태변경 배치 등록]
+--(JOB 등록)
 BEGIN
   DBMS_SCHEDULER.CREATE_JOB(
     job_name        => 'BEN_MTH_SHFUND_BATCH',
@@ -111,7 +111,16 @@ END;
 
 
 
-[배치 시작시간 변경 등]
+--[배치 시작시간 변경 등]
+BEGIN
+  DBMS_SCHEDULER.SET_ATTRIBUTE(
+    name      => 'BEN_MTH_SHFUND_BATCH',
+    attribute => 'start_date',
+    value     => TO_TIMESTAMP('2025-04-28 15:00:00', 'YYYY-MM-DD HH24:MI:SS')
+  );
+END;
+/
+
 BEGIN
   DBMS_SCHEDULER.CREATE_JOB(
     job_name        => 'BEN_MTH_SHFUND_BATCH',
@@ -174,3 +183,22 @@ BEGIN
   );
 END;
 /
+
+
+--[급여반영자, 지급상태 P가 아닌 사번 조회]
+SELECT A.ENTER_CD,count(distinct A.sabun) cnt
+FROM TBEN632 A
+WHERE 1=1
+AND A.PAY_YM=(
+  SELECT MIN(pay_action_cd)
+    FROM tcpn201
+   WHERE enter_cd       = A.ENTER_CD
+     AND pay_cd          = 'A1'
+     AND cal_tax_method  = 'B'
+     AND pay_ym          = TO_CHAR(SYSDATE, 'YYYYMM')
+)
+AND (A.COM_AMT IS NOT NULL OR A.COM_AMT = 0)
+AND A.SABUN not IN (SELECT B.SABUN FROM TBEN631 B
+            WHERE B.PAY_STS='P'
+            AND B.ENTER_CD=A.ENTER_CD)
+GROUP BY A.ENTER_CD;
