@@ -190,7 +190,7 @@ SELECT A.ENTER_CD,count(distinct A.sabun) cnt
 FROM TBEN632 A
 WHERE 1=1
 AND A.PAY_YM=(
-  SELECT MIN(pay_action_cd)
+  SELECT SUBSTR(MIN(pay_action_cd),1,6)
     FROM tcpn201
    WHERE enter_cd       = A.ENTER_CD
      AND pay_cd          = 'A1'
