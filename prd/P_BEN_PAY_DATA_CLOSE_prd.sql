@@ -82,7 +82,9 @@ BEGIN
     END;
 
     --급여가 마감된 경우, 복리후생 마감업무 처리를 할 수 없음.
-    IF LV_PAY_CLOSE_YN = 'Y' THEN
+    --IF LV_PAY_CLOSE_YN = 'Y' THEN
+    -- HX, 신협적립금 제외 처리 2025.04.23
+    IF LV_PAY_CLOSE_YN = 'Y' AND (P_BENEFIT_BIZ_CD != '75' AND P_ENTER_CD = 'HX') THEN
        P_SQLCODE  := '999';
        P_SQLERRM  := '해당 급여가 이미 마감되었습니다. 마감된 급여에 대한 마감은 진행할 수 없습니다. 급여 담당자와 해당 급여의 마감여부를 확인해보시기 바랍니다.';
        RETURN;

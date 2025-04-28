@@ -2393,7 +2393,9 @@ BEGIN
 				, A.PAY_STS = 'S'
 				, A.CHKDATE = SYSDATE
 				, A.CHKID  = 'BEN_PAY_PRC'
-			WHERE ( F_BEN_GET_IS_CA_YN(A.ENTER_CD, A.SABUN, TO_CHAR(SYSDATE,'YYYYMMDD')) = 'Y'-- ,'EA'정직은 따로관리함
+			WHERE 1=1
+      AND A.ENTER_CD = P_ENTER_CD
+      AND ( F_BEN_GET_IS_CA_YN(A.ENTER_CD, A.SABUN, TO_CHAR(SYSDATE,'YYYYMMDD')) = 'Y'-- ,'EA'정직은 따로관리함
 						 		OR EXISTS( SELECT 1 FROM THRM129 X, TSYS005 Y
 														WHERE 1=1
 														AND X.ENTER_CD = A.ENTER_CD
@@ -2428,15 +2430,18 @@ BEGIN
 				해당 급여년월을 복구년월, 지급상태 "지급"으로 TBEN632에 Update  */
 		BEGIN
 			 UPDATE TBEN631 A
-		   SET A.USE_MS_YM =  TO_CHAR(ADD_MONTHS(TO_DATE(P_CPN201.PAY_YM, 'YYYYMM') , 1), 'YYYYMM')
+       -- 복구년월을 급여년월로 설정 2025.04.24
+		   --SET A.USE_MS_YM =  TO_CHAR(ADD_MONTHS(TO_DATE(P_CPN201.PAY_YM, 'YYYYMM') , 1), 'YYYYMM')
+       SET A.USE_MS_YM = P_CPN201.PAY_YM
 		   	 , A.PAY_STS = 'P'
 		   	 , A.CHKDATE = SYSDATE
 		   	 , A.CHKID  = 'BEN_PAY_PRC'
-		   	WHERE EXISTS (
+		   	WHERE 1=1
+        AND A.ENTER_CD = P_ENTER_CD
+        AND EXISTS (
 			   	SELECT 1
 					FROM THRM151 C
 					WHERE 1=1
-					  AND A.ENTER_CD = P_ENTER_CD
 					 -- C
 						AND A.ENTER_CD = C.ENTER_CD
 						AND A.SABUN    = C.SABUN
@@ -2446,6 +2451,11 @@ BEGIN
 					 -- 복구년월이 Null인 경우
 						AND ((A.USE_M_YM IS NOT NULL AND LENGTH(TRIM(A.USE_M_YM)) = 6) AND (A.USE_MS_YM IS NULL OR A.USE_MS_YM = ''))
 						AND P_CPN201.PAY_CD  <> 'A3'
+            -- 근무일수 15일 이상 체크 추가 2025.04.024
+            AND (F_CPN_WKP_CNT( A.ENTER_CD, A.SABUN
+                              , TO_CHAR(TRUNC(SYSDATE, 'MONTH'), 'YYYYMMDD') -- 해당월의 첫날
+                              , TO_CHAR(LAST_DAY(SYSDATE), 'YYYYMMDD'))			-- 해당월의 마지막날
+                              / TO_CHAR(LAST_DAY(SYSDATE), 'DD')) >= 0.5
 				)
 				-- 필수사항, 종료 아닐때만, 종료년월이 없더라도 담당자가 수정했을 경우가 있기 대문에
 				AND A.PAY_STS <> 'F'
@@ -2477,11 +2487,12 @@ BEGIN
 												 AND C.STATUS_CD = 'RA')
 				 , A.CHKDATE = SYSDATE
 				 , A.CHKID  = 'BEN_PAY_PRC'
-			WHERE EXISTS (
+			WHERE 1=1
+      AND A.ENTER_CD = P_ENTER_CD
+      AND EXISTS (
 					SELECT 1
 					  FROM THRM151 C
 					WHERE 1=1
-					 AND A.ENTER_CD = P_ENTER_CD
 					-- C
 					 AND A.ENTER_CD = C.ENTER_CD
 					 AND A.SABUN    = C.SABUN
@@ -2498,11 +2509,12 @@ BEGIN
 	   SET  A.PAY_STS = 'F'
 	   	 , A.CHKDATE = SYSDATE
 	   	 , A.CHKID  = 'BEN_PAY_PRC'
-	   	WHERE EXISTS (
+	   	WHERE 1=1
+      AND A.ENTER_CD = P_ENTER_CD
+      AND EXISTS (
 		   	SELECT 1
 				FROM THRM151 C
 				WHERE 1=1
-				  AND A.ENTER_CD = P_ENTER_CD
 				 -- C
 					AND A.ENTER_CD = C.ENTER_CD
 					AND A.SABUN    = C.SABUN
