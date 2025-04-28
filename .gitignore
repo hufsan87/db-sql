@@ -1,0 +1,13 @@
+# VS Code 워크스페이스 파일 무시
+#*.code-workspace
+
+# VS Code 폴더 무시
+.vscode/
+
+# 임시 파일 무시
+*.log
+*.tmp
+
+# 운영체제 관련 파일 무시
+.DS_Store
+Thumbs.db
