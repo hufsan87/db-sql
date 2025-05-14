@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd http://java.sun.com/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee"
+	version="2.5">
+	<display-name>hr</display-name>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.hr.common.loginSessionListener.LoginManager</listener-class>
+	</listener>
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j2.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>webapp.root</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/spring/context-*.xml</param-value>
+	</context-param>
+	
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>time</filter-name>
+		<filter-class>com.hr.main.filter.TimerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>time</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>xssEscapeServletFilter</filter-name>
+		<filter-class>com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>xssEscapeServletFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:/spring/*-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>/websocket/*</url-pattern>
+		<url-pattern>/api/v1/ben/int-001/*</url-pattern>
+		<url-pattern>/api/v1/ben/int-002/*</url-pattern>
+		<url-pattern>/api/v1/ben/int-003/*</url-pattern>
+		<url-pattern>/api/v1/ben/int-004/*</url-pattern>
+		<url-pattern>/api/v1/ben/int-005/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-001/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-002/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-003/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-004/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-005/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-006/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-006-KS/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-007-KS/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-008/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-009/*</url-pattern>
+		<url-pattern>/api/v1/cpn/int-010/*</url-pattern>
+		<url-pattern>/api/v1/hrm/int-001/*</url-pattern>
+		<url-pattern>/api/v1/hrm/int-002/*</url-pattern>
+		<url-pattern>/api/v1/hrm/int-003/*</url-pattern>
+		<url-pattern>/api/v1/hrm/int-004/*</url-pattern>
+		<url-pattern>/api/v1/hrm/int-005/*</url-pattern>
+		<url-pattern>/api/v1/hri/int-001/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-001/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-002/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-003/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-004/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-005/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-006-KS/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-007-KS/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-008-KS/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-009-KS/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-009/*</url-pattern>
+		<url-pattern>/api/v1/tim/int-010/*</url-pattern>
+	</servlet-mapping>
+	
+	
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/Info.do?code=400</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/Info.do?code=401</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/Info.do?code=403</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/Info.do?code=404</location>
+	</error-page>
+	<error-page>
+		<error-code>408</error-code>
+		<location>/Info.do?code=408</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/Info.do?code=500</location>
+	</error-page>
+	<error-page>
+		<error-code>503</error-code>
+		<location>/Info.do?code=503</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/Info.do?code=901</location>
+	</error-page>
+	<error-page>
+		<exception-type>javax.servlet.ServletException</exception-type>
+		<location>/Info.do?code=902</location>
+	</error-page>
+	<!-- JBOSS에서 에러발생 2023-06-26 주석추가
+	<error-page>
+		<exception-type>weblogic.servlet.jsp.CompilationException</exception-type>
+		<location>/Info.do?code=903</location>
+	</error-page>
+	-->
+	<error-page>
+		<exception-type>java.lang.NumberFormatException</exception-type>
+		<location>/Info.do?code=904</location>
+	</error-page>
+	<!-- ERROR PAGES: END --> 
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+
+	<!-- ADD 2023.10.27
+    -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>restricted methods</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>PUT</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>OPTIONS</http-method>
+		</web-resource-collection>
+		<auth-constraint />
+	</security-constraint>
+	<distributable/>
+</web-app>
