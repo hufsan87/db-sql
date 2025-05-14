@@ -43,14 +43,26 @@
 		<filter-name>time</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+
 	<filter>
 		<filter-name>xssEscapeServletFilter</filter-name>
 		<filter-class>com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>xssEscapeServletFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>xssEscapeServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- BasicAuth 적용[1/2]-->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -155,9 +167,11 @@
 	</error-page>
 	<!-- ERROR PAGES: END --> 
 
-	<login-config>
+<!-- BasicAuth 적용[2/2] : Container level login policy 주석처리 필요-->
+<!--	<login-config>
 		<auth-method>BASIC</auth-method>
-	</login-config>
+    	</login-config>
+-->
 
 	<!-- ADD 2023.10.27
     -->
