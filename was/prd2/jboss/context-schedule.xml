@@ -39,22 +39,6 @@
 		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 40 13 ? * MON-FRI"/>     
 		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 0/5 14-15 ? * MON-FRI"/>    
 		-->
-	
-
-    <!--
-        한진관광 타각
-    -->
-    <task:scheduler id="hxTim331Scheduler_kaltour" pool-size="10"/>
-    <bean id="hxTim331Scheduled_kaltour" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
-    <task:scheduled-tasks scheduler="hxTim331Scheduler_kaltour">
-        <!-- 0시부터 7시까지 매 5분마다 실행 -->
-        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="1 */5 0-7 * * ?" />
-        <!-- 8시에 매 1분마다 실행 -->
-        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="1 0-59/1 8 * * ?" />
-        <!-- 9시부터 24시까지 매 5분마다 실행 -->
-        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="1 */5 9-23 * * ?" />
-    </task:scheduled-tasks>
- 
 
 	<!-- 
 		한진정보 출장,교육
@@ -328,6 +312,23 @@
 	-->
 
     <!-- 한진관광 토파스 추가에 따른 스케출러 등록 Start -->
+    <!--
+        한진관광 타각
+    -->
+    <task:scheduler id="hxTim331Scheduler_kaltour" pool-size="10"/>
+    <bean id="hxTim331Scheduled_kaltour" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="hxTim331Scheduler_kaltour">
+        <!-- 08:00 ~ 08:40 : 10분 간격 (0,10,20,30,40) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0,10,20,30 8 * * ?" />
+        <!-- 08:40 ~ 09:00 : 1분 간격 (40~59분) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 40-59 8 * * ?" />
+        <!-- 09:00 ~ 10:00 : 10분 간격 (0,10,20,...,50) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0/10 9 * * ?" />
+        <!-- 자정~07시까지: 매 정각 1시간마다 실행 -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0 0-7 * * ?" />
+        <!-- 10시~23시까지: 매 정각 1시간마다 실행 -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0 10-23 * * ?" />
+    </task:scheduled-tasks>
 
     <!--
         한진관광 인사마스터
