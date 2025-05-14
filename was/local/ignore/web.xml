@@ -53,7 +53,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- BasicAuth 적용[1/2]-->
+<!-- BasicAuth
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -62,6 +62,7 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+-->
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -167,11 +168,10 @@
 	</error-page>
 	<!-- ERROR PAGES: END --> 
 
-<!-- BasicAuth 적용[2/2] : Container level login policy 주석처리 필요-->
-<!--	<login-config>
+<!-- HanPAWs Basic Auth 적용관련 주석처리 2025.04.18 -->
+	<login-config>
 		<auth-method>BASIC</auth-method>
-    	</login-config>
--->
+	</login-config>
 
 	<!-- ADD 2023.10.27
     -->
