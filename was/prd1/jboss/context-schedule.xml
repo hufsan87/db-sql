@@ -33,7 +33,7 @@
 	<bean id="oliveScheduled" class="com.hr.common.scheduler.olive.OliveScheduleController"/>
 	<task:scheduled-tasks scheduler="oliveScheduler">
 		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 50 7 ? * MON-FRI"/>
-		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 0/10 17-20 ? * MON-FRI"/>
+		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 0/10 17-23 ? * MON-FRI"/>
 	</task:scheduled-tasks>
 		<!-- 
 		<task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 40 13 ? * MON-FRI"/>     
