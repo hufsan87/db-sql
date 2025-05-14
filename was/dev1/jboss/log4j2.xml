@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://logging.apache.org/log4j/2.0/config" status="OFF" packages="com.hr">
+	<Properties>
+		<Property name="log-dir">/WEB-INF/logs</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<!-- <PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %m%n" /> -->
+			<PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %spi%n" />
+		</Console>
+
+		<!--
+		<RollingFile name="RollingFile" fileName="${sys:webapp.root}/WEB-INF/logs/spring.log" filePattern="${sys:webapp.root}/WEB-INF/logs/spring_%d{yyyy-MM-dd}.log" append="true">
+		<RollingFile name="RollingFile" fileName="${webapp.root}/WEB-INF/logs/spring.log" filePattern="${webapp.root}/WEB-INF/logs/spring_%d{yyyy-MM-dd}.log" append="true">
+		-->
+		<RollingFile name="RollingFile" fileName="${webapp.root}/WEB-INF/logs/spring.log" filePattern="${webapp.root}/WEB-INF/logs/spring_%d{yyyy-MM-dd}" append="true">
+			<!-- <PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %m%n" /> -->
+			<PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %spi%n" />
+			<Policies>
+				<!-- interval(default 1)이므로 1초 간격으로 rolling 수행 intervar속성 추가 -->
+				<TimeBasedTriggeringPolicy interval="24" />
+				<!-- 사이즈 제한을 하고 싶을 경우 아래 속성 추가 -->
+				<SizeBasedTriggeringPolicy size="250 MB"/>
+			</Policies>
+		</RollingFile>
+
+		<RollingFile name="SeparateLog" fileName="${webapp.root}/WEB-INF/logs/sepLog.log" filePattern="${webapp.root}/WEB-INF/logs/sepLog_%d{yyyy-MM-dd}.log">
+			<!-- <PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %m%n" /> -->
+			<PatternLayout pattern="%p %d{HH:mm:ss,SSS} [%c] %spi%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<!--
+			logger의 name에는 class 속성이 들어간다.
+			문제는 현재 프로젝트는 src밑에 개별로 package를 쪼개놔서 이를 설정하기가 애매해보인다.
+			그냥 각각 logger 설정-_-;
+			additivity => 로그 중복여부, ROOT와 중복될 경우 한곳에서만 출력
+		-->
+		<Logger name="com.hr" level="DEBUG" additivity="false">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		<Logger name="org.springframework" level="ERROR" additivity="true">
+			<AppenderRef ref="Console" />
+			<!-- <AppenderRef ref="RollingFile" /> -->
+		</Logger>
+
+		<Logger name="org.anyframe" level="ERROR" additivity="false">
+			<!--<AppenderRef ref="Console" />-->
+		</Logger>
+
+		<Logger name="log4jdbc.log4j2" level="INFO" additivity="false">
+			<!-- resultset 보고 싶을때는 아래 markerfilter 주석바람. -->
+			<MarkerFilter marker="LOG4JDBC_OTHER" onMatch="DENY" onMismatch="NEUTRAL"/>
+			<AppenderRef ref="Console"/>
+			<!-- <AppenderRef ref="RollingFile" /> -->
+		</Logger>
+
+		<Logger name="com.hr.common.aop.FileLoggingAspect" level="DEBUG" additivity="false">
+			<!-- <AppenderRef ref="SeparateLog"/> -->
+		</Logger>
+		<!-- console 에 출력하는건 ROOT를 사용하게 함 -->
+		<Root level="DEBUG">
+			<AppenderRef ref="Console" />
+			<!-- <AppenderRef ref="RollingFile" /> -->
+		</Root>
+	</Loggers>
+</configuration>

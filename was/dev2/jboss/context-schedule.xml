@@ -1,0 +1,476 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/batch
+						http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+						http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.2.xsd
+						http://www.springframework.org/schema/task
+						http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+    <!-- 
+        <task:scheduler id="scheduler" pool-size="10"/>
+        <bean id="scheduled" class="com.hr.common.scheduler.ScheduleController"/>
+        <task:scheduled-tasks scheduler="scheduler">
+            <task:scheduled ref="scheduled" method="smtpScheduler" cron="0 */5 * * * ?"/>
+        </task:scheduled-tasks>
+    -->
+    <!-- 
+        <task:scheduler id="apigeeScheduler" pool-size="10"/>
+        <bean id="apigeeScheduled" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+        <task:scheduled-tasks scheduler="apigeeScheduler">
+            <task:scheduled ref="apigeeScheduled" method="apigeeScheduler" cron="0 0 8 * * ?"/>          
+        </task:scheduled-tasks>
+            <task:scheduled ref="apigeeScheduled" method="apigeeScheduler" cron="0 40 12 * * ?"/>     
+            <task:scheduled ref="apigeeScheduled" method="apigeeScheduler" cron="0 20 08 * * ?"/>     
+            <task:scheduled ref="apigeeScheduled" method="apigeeScheduler" cron="0 23 18 * * ?"/>     
+            <task:scheduled ref="apigeeScheduled" method="tempScheduler" cron="0 */30 * * * ?"/> 
+    -->
+
+    <task:scheduler id="oliveScheduler" pool-size="10"/>
+    <bean id="oliveScheduled" class="com.hr.common.scheduler.olive.OliveScheduleController"/>
+    <task:scheduled-tasks scheduler="oliveScheduler">
+        <task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 50 8 ? * MON-FRI"/>
+        <task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 0/10 17-20 ? * MON-FRI"/>
+    </task:scheduled-tasks>
+    <!-- 
+    <task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 40 13 ? * MON-FRI"/>     
+    <task:scheduled ref="oliveScheduled" method="oliveScheduler" cron="0 0/5 14-15 ? * MON-FRI"/>    
+    -->
+
+    <!-- 
+        한진정보 출장,교육
+    -->
+    <task:scheduler id="hxTim301EtcScheduler" pool-size="10"/>
+    <bean id="hxTim301EtcScheduled" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="hxTim301EtcScheduler">
+        <!--<task:scheduled ref="hxTim301EtcScheduled" method="hxTim301EtcScheduler" cron="0 0/10 * * * *"/>-->
+	<task:scheduled ref="hxTim301EtcScheduled" method="hxTim301EtcScheduler" cron="0 4/10 * * * *"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보 타각
+    -->
+    <task:scheduler id="hxTim331Scheduler" pool-size="10"/>
+    <bean id="hxTim331Scheduled" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="hxTim331Scheduler">
+        <task:scheduled ref="hxTim331Scheduled" method="hxTim331Scheduler" cron="0 2/5 * * * *"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 인사마스트
+    -->
+    <task:scheduler id="thrm100_HG" pool-size="10"/>
+    <bean id="thrm100HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm100_HG">
+        <task:scheduled ref="thrm100HG" method="thrm100_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 발령,휴/복직,징계
+    -->
+    <task:scheduler id="thrm192_HG" pool-size="10"/>
+    <bean id="thrm192HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm192_HG">
+        <task:scheduled ref="thrm192HG" method="thrm192_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 조직
+    -->
+    <task:scheduler id="torg105_HG" pool-size="10"/>
+    <bean id="torg105HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="torg105_HG">
+        <task:scheduled ref="torg105HG" method="torg105_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 수습
+    -->
+    <task:scheduler id="thrm196_HG" pool-size="10"/>
+    <bean id="thrm196HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm196_HG">
+        <task:scheduled ref="thrm196HG" method="thrm196_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 계약
+    -->
+    <task:scheduler id="thrm197_HG" pool-size="10"/>
+    <bean id="thrm197HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm197_HG">
+        <task:scheduled ref="thrm197HG" method="thrm197_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 파견
+    -->
+    <task:scheduler id="thrm112_HG" pool-size="10"/>
+    <bean id="thrm112HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm112_HG">
+        <task:scheduled ref="thrm112HG" method="thrm112_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 사진리스트
+    -->
+    <task:scheduler id="thrm911_LIST_HG" pool-size="10"/>
+    <bean id="thrm911LISTHG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm911_LIST_HG">
+        <task:scheduled ref="thrm911LISTHG" method="thrm911_LIST_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진칼 가족사항
+    -->
+    <task:scheduler id="thrm111_HG" pool-size="10"/>
+    <bean id="thrm111HG" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm111_HG">
+        <task:scheduled ref="thrm111HG" method="thrm111_HG" cron="0 0 10 * * ?"/>
+    </task:scheduled-tasks>
+
+
+    <!-- 
+        한진정보통신 인사마스터
+    -->
+    <task:scheduler id="thrm100_HX" pool-size="10"/>
+    <bean id="thrm100HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm100_HX">
+        <task:scheduled ref="thrm100HX" method="thrm100_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 발령,휴/복직, 징계
+    -->
+    <task:scheduler id="thrm192_HX" pool-size="10"/>
+    <bean id="thrm192HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm192_HX">
+        <task:scheduled ref="thrm192HX" method="thrm192_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 조직
+    -->
+    <task:scheduler id="torg105_HX" pool-size="10"/>
+    <bean id="torg105HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="torg105_HX">
+        <task:scheduled ref="torg105HX" method="torg105_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 수습
+    -->
+    <task:scheduler id="thrm196_HX" pool-size="10"/>
+    <bean id="thrm196HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm196_HX">
+        <task:scheduled ref="thrm196HX" method="thrm196_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 계약
+    -->
+    <task:scheduler id="thrm197_HX" pool-size="10"/>
+    <bean id="thrm197HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm197_HX">
+        <task:scheduled ref="thrm197HX" method="thrm197_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 파견
+    -->
+    <task:scheduler id="thrm112_HX" pool-size="10"/>
+    <bean id="thrm112HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm112_HX">
+        <task:scheduled ref="thrm112HX" method="thrm112_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 사진리스트
+    -->
+    <task:scheduler id="thrm911_LIST_HX" pool-size="10"/>
+    <bean id="thrm911LISTHX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm911_LIST_HX">
+        <task:scheduled ref="thrm911LISTHX" method="thrm911_LIST_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한진정보통신 가족사항
+    -->
+    <task:scheduler id="thrm111_HX" pool-size="10"/>
+    <bean id="thrm111HX" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm111_HX">
+        <task:scheduled ref="thrm111HX" method="thrm111_HX" cron="0 5 10 * * ?"/>
+    </task:scheduled-tasks>
+
+
+
+    <!-- 
+        한국공항 인사마스터
+    -->
+    <task:scheduler id="thrm100_KS" pool-size="10"/>
+    <bean id="thrm100KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm100_KS">
+        <task:scheduled ref="thrm100KS" method="thrm100_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 발령,휴/복,징계
+    -->
+    <task:scheduler id="thrm192_KS" pool-size="10"/>
+    <bean id="thrm192KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm192_KS">
+        <task:scheduled ref="thrm192KS" method="thrm192_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 조직
+    -->
+    <task:scheduler id="torg105_KS" pool-size="10"/>
+    <bean id="torg105KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="torg105_KS">
+        <task:scheduled ref="torg105KS" method="torg105_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 수습
+    -->
+    <task:scheduler id="thrm196_KS" pool-size="10"/>
+    <bean id="thrm196KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm196_KS">
+        <task:scheduled ref="thrm196KS" method="thrm196_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 계약
+    -->
+    <task:scheduler id="thrm197_KS" pool-size="10"/>
+    <bean id="thrm197KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm197_KS">
+        <task:scheduled ref="thrm197KS" method="thrm197_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 파견
+    -->
+    <task:scheduler id="thrm112_KS" pool-size="10"/>
+    <bean id="thrm112KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm112_KS">
+        <task:scheduled ref="thrm112KS" method="thrm112_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 사진리스트
+    -->
+    <task:scheduler id="thrm911_LIST_KS" pool-size="10"/>
+    <bean id="thrm911LISTKS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm911_LIST_KS">
+        <task:scheduled ref="thrm911LISTKS" method="thrm911_LIST_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 가족사항
+    -->
+    <task:scheduler id="thrm111_KS" pool-size="10"/>
+    <bean id="thrm111KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm111_KS">
+        <task:scheduled ref="thrm111KS" method="thrm111_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 수당발령
+    -->
+    <task:scheduler id="tcpn429_KS" pool-size="10"/>
+    <bean id="tcpn429KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="tcpn429_KS">
+        <task:scheduled ref="tcpn429KS" method="tcpn429_KS" cron="0 10 10 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 생수불출내역
+    -->
+    <task:scheduler id="tben592_KS" pool-size="10"/>
+    <bean id="tben592KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="tben592_KS">
+        <!--<task:scheduled ref="tben592KS" method="tben592_KS" cron="0 1 5 * * ?"/>-->
+        <!--<task:scheduled ref="tben592KS" method="tben592_KS" cron="0 10 10 * * ?"/>-->
+	<task:scheduled ref="tben592KS" method="tben592_KS" cron="0 3/5 * * * ?"/>
+    </task:scheduled-tasks>
+
+    <!-- 
+        한국공항 통합조업
+
+    <task:scheduler id="ttim112_KS" pool-size="10"/>
+    <bean id="ttim112KS" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="ttim112_KS">
+        <task:scheduled ref="ttim112KS" method="ttim112_KS" cron="0 2 5 * * ?"/>
+    </task:scheduled-tasks>
+    -->
+
+    <!-- 한진관광 토파스 추가에 따른 스케출러 등록 Start -->
+    <!--
+        한진관광 타각
+    -->
+    <task:scheduler id="hxTim331Scheduler_kaltour" pool-size="10"/>
+    <bean id="hxTim331Scheduled_kaltour" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="hxTim331Scheduler_kaltour">
+        <!-- 08:00 ~ 08:40 : 10분 간격 (0,10,20,30,40) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0,10,20,30 8 * * ?" />
+        <!-- 08:40 ~ 09:00 : 1분 간격 (40~59분) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 40-59 8 * * ?" />
+        <!-- 09:00 ~ 10:00 : 10분 간격 (0,10,20,...,50) -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0/10 9 * * ?" />
+        <!-- 자정~07시까지: 매 정각 1시간마다 실행 -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0 0-7 * * ?" />
+        <!-- 10시~23시까지: 매 정각 1시간마다 실행 -->
+        <task:scheduled ref="hxTim331Scheduled_kaltour" method="hxTim331Scheduler_kaltour" cron="2 0 10-23 * * ?" />
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 인사마스터
+	-->
+    <task:scheduler id="thrm100_HT" pool-size="10"/>
+    <bean id="thrm100HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm100_HT">
+        <task:scheduled ref="thrm100HT" method="thrm100_HT" cron="0 35 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 발령,휴/복직, 징계
+	-->
+    <task:scheduler id="thrm192_HT" pool-size="10"/>
+    <bean id="thrm192HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm192_HT">
+        <task:scheduled ref="thrm192HT" method="thrm192_HT" cron="0 40 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 조직
+	 -->
+    <task:scheduler id="torg105_HT" pool-size="10"/>
+    <bean id="torg105HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="torg105_HT">
+        <task:scheduled ref="torg105HT" method="torg105_HT" cron="0 5 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 수습
+	-->
+    <task:scheduler id="thrm196_HT" pool-size="10"/>
+    <bean id="thrm196HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm196_HT">
+        <task:scheduled ref="thrm196HT" method="thrm196_HT" cron="0 7 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 계약
+	 -->
+    <task:scheduler id="thrm197_HT" pool-size="10"/>
+    <bean id="thrm197HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm197_HT">
+        <task:scheduled ref="thrm197HT" method="thrm197_HT" cron="0 9 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 파견
+	-->
+    <task:scheduler id="thrm112_HT" pool-size="10"/>
+    <bean id="thrm112HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm112_HT">
+        <task:scheduled ref="thrm112HT" method="thrm112_HT" cron="0 11 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 사진리스트
+	-->
+    <task:scheduler id="thrm911_LIST_HT" pool-size="10"/>
+    <bean id="thrm911LISTHT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm911_LIST_HT">
+        <task:scheduled ref="thrm911LISTHT" method="thrm911_LIST_HT" cron="0 13 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        한진관광 가족사항
+	 -->
+    <task:scheduler id="thrm111_HT" pool-size="10"/>
+    <bean id="thrm111HT" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm111_HT">
+        <task:scheduled ref="thrm111HT" method="thrm111_HT" cron="0 15 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 인사마스터
+	 -->
+    <task:scheduler id="thrm100_TP" pool-size="10"/>
+    <bean id="thrm100TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm100_TP">
+        <task:scheduled ref="thrm100TP" method="thrm100_TP" cron="0 50 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 발령,휴/복직, 징계
+	-->
+    <task:scheduler id="thrm192_TP" pool-size="10"/>
+    <bean id="thrm192TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm192_TP">
+        <task:scheduled ref="thrm192TP" method="thrm192_TP" cron="0 55 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 조직
+	-->
+    <task:scheduler id="torg105_TP" pool-size="10"/>
+    <bean id="torg105TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="torg105_TP">
+        <task:scheduled ref="torg105TP" method="torg105_TP" cron="0 21 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 수습
+	-->
+    <task:scheduler id="thrm196_TP" pool-size="10"/>
+    <bean id="thrm196TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm196_TP">
+        <task:scheduled ref="thrm196TP" method="thrm196_TP" cron="0 23 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 계약
+	-->
+    <task:scheduler id="thrm197_TP" pool-size="10"/>
+    <bean id="thrm197TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm197_TP">
+        <task:scheduled ref="thrm197TP" method="thrm197_TP" cron="0 25 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 파견
+	-->
+    <task:scheduler id="thrm112_TP" pool-size="10"/>
+    <bean id="thrm112TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm112_TP">
+        <task:scheduled ref="thrm112TP" method="thrm112_TP" cron="0 27 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 사진리스트
+	-->
+    <task:scheduler id="thrm911_LIST_TP" pool-size="10"/>
+    <bean id="thrm911LISTTP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm911_LIST_TP">
+        <task:scheduled ref="thrm911LISTTP" method="thrm911_LIST_TP" cron="0 29 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--
+        토파스 가족사항
+	-->
+    <task:scheduler id="thrm111_TP" pool-size="10"/>
+    <bean id="thrm111TP" class="com.hr.common.scheduler.apigee.ApigeeScheduleController"/>
+    <task:scheduled-tasks scheduler="thrm111_TP">
+        <task:scheduled ref="thrm111TP" method="thrm111_TP" cron="0 31 12 * * ?"/>
+    </task:scheduled-tasks>
+
+    <!--  한진관광 토파스 추가에 따른 스케출러 등록 End  -->	
+
+</beans>
