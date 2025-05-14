@@ -31,9 +31,8 @@
     <!-- ④ 인증 사용자 정의 (properties에서 값 주입) -->
     <authentication-manager>
         <authentication-provider>
-            <password-encoder ref="passwordEncoder"/>
             <user-service>
-                <user name="${apigee.api.user}" password="${apigee.api.pass}" authorities="ROLE_API" />
+                <user name="test" password="test" authorities="ROLE_API" />
             </user-service>
         </authentication-provider>
     </authentication-manager>
