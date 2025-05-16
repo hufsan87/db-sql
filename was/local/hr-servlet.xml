@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans   xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:anyframe="http://www.anyframejava.org/schema/mvc"
+    xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                http://www.springframework.org/schema/mvc     http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+                http://www.springframework.org/schema/task    http://www.springframework.org/schema/task/spring-task-4.3.xsd
+                http://www.anyframejava.org/schema/mvc       http://www.anyframejava.org/schema/mvc/anyframe-spring-mvc-4.5.xsd
+				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<mvc:annotation-driven />
+	<context:annotation-config />
+<!--<anyframe:annotation-driven/> -->
+    <anyframe:annotation-driven synchronizeOnSession="false" />
+
+<util:properties id="fileupload" location="classpath:fileupload.properties" />
+<!--    . -->
+<!--    <task:annotation-driven></task:annotation-driven>-->
+<!--    <context:component-scan base-package="org.webapp.services.tasks"></context:component-scan> -->
+<!-- . -->
+
+	<aop:aspectj-autoproxy />
+	<bean id="fileLogAspect" class="com.hr.common.aop.FileLoggingAspect"/>
+	
+    <context:component-scan base-package="com.hr" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+<!--    <context:component-scan base-package="com.hr"/> -->
+<!--    <task:annotation-driven/> -->
+<!-- 
+    <mvc:interceptors>
+        <bean class="com.hr.common.interceptor.Interceptor" />
+    </mvc:interceptors>
+ -->
+    
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/**" />
+    		<mvc:exclude-mapping path="/websocket" />
+    		<mvc:exclude-mapping path="/websocket/**" />
+        	<bean class="com.hr.common.interceptor.Interceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+    </bean>
+
+    <bean id="exceptionResolver" class="com.hr.common.exception.handler.HrExceptionResolver">
+        <property name="defaultErrorView" value="common/error/info" />
+    </bean>
+
+    <bean id="jstlViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass"  value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix"     value="/WEB-INF/jsp/" />
+        <property name="suffix"     value=".jsp" />
+    </bean>
+
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+        <property name="defaultLocale" value="kr" />
+    </bean>
+
+<!--
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <value>10000000</value>
+        </property>
+    </bean>
+-->
+
+    <bean id="beanNameResolver"  class="org.springframework.web.servlet.view.BeanNameViewResolver" >
+        <property name="order" value="0"></property>
+    </bean>
+
+    <bean id="jsonView"  class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" >
+        <property name="contentType" value="application/json; charset=UTF-8"></property>
+    </bean>
+    
+    <!-- google oauth2 login -->
+    <!-- 클라이언트ID와 보안비밀 세팅 -->
+    <bean id="googleConnectionFactory" class="org.springframework.social.google.connect.GoogleConnectionFactory">
+      <constructor-arg value="#{opti['google.client.id']}" />
+      <constructor-arg value="#{opti['google.secret']}" />
+    </bean>
+
+    <bean id="googleConnectionFactoryHT" class="org.springframework.social.google.connect.GoogleConnectionFactory">
+        <constructor-arg value="#{opti['google.client.id.ht']}" />
+        <constructor-arg value="#{opti['google.secret.ht']}" />
+    </bean>
+    
+    <!-- 승인된 자바스크립트 원본과 승인된 리디렉션 URI -->
+    <bean id="googleOAuth2Parameters" class="org.springframework.social.oauth2.OAuth2Parameters">
+        <property name="scope" value="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" />
+        <property name="redirectUri" value="#{opti['google.redirect.url']}" />
+    </bean>
+
+    <bean id="googleOAuth2ParametersHT" class="org.springframework.social.oauth2.OAuth2Parameters">
+        <property name="scope" value="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email" />
+        <property name="redirectUri" value="#{opti['google.redirect.url.ht']}" />
+    </bean>
+    
+    
+</beans>
