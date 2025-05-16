@@ -248,7 +248,7 @@ BEGIN
             /* -- 건강보험 급여공제방식(C:공단자료연계) */
             IF lv_ben_cal_type = 'C' THEN
                BEGIN
-                IF P_ENTER_CD = 'HX' THEN -- 한진정보통신, 공단자료(사번) 업로드 이용
+                IF P_ENTER_CD in ('HX','TP') THEN -- 한진정보통신, 공단자료(사번) 업로드 이용, (2025.05.16)TP 추가
                   INSERT INTO TBEN777
                   (
                           ENTER_CD --회사구분(TORG900)
