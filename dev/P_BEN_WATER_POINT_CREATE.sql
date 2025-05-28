@@ -137,7 +137,7 @@ BEGIN
 					  AND 1 = CASE WHEN C.ENTER_CD = 'HG' AND C.SABUN IN ('0001902','0002001') THEN 0
 					  						 WHEN C.ENTER_CD = 'HG' AND C.MANAGE_CD IN ('CWT_01','CWT_02','CWT_03') THEN 0
 					  						 WHEN C.ENTER_CD = 'KS' 
-					  						  AND C.MANAGE_CD = 'ETS_08' --인턴직 3개월
+					  						  AND C.MANAGE_CD IN('ETS_08', 'ETS_01') --인턴직 3개월, ('25.05.28)정규직 포함
 					  							AND F_COM_GET_CAREER_CNT_BAS_YMD(C.ENTER_CD, C.SABUN, p_search_ym||'01', 'W', 'MM', '0',NULL,'') < 3 THEN 0
 					  							-- 한국공항 추가요청 23.12.04 : 인턴직이면서 3개월 미만인 사원 생성 X, 정직원 포함, KS 25.05.28
 					  ELSE 1 END -- 한진칼에서 추가요청 23.11.23
