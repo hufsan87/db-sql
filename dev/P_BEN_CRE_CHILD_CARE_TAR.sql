@@ -58,8 +58,21 @@ IS
                AND B.APPL_STATUS_CD = '99'
                AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'99991231'))
                AND (A.PAY_STS = 'P' OR 
-                    (A.PAY_STS = 'S' AND (NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND 
-                                          P_TAR_YM < NVL(A.USE_E_YM, A.USE_M_YM))))
+                    (A.PAY_STS = 'S' AND (
+                        -- 변경 '25.05.29
+--                                        NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND 
+--                                        P_TAR_YM < NVL(A.USE_E_YM, A.USE_M_YM)
+                                          P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                                          AND (A.USE_M_YM IS NULL 
+                                               OR (
+                                                 A.USE_M_YM>P_TAR_YM
+                                                 OR
+                                                 A.USE_MS_YM<=P_TAR_YM
+                                               )
+                                          )
+                                        )
+                    ))
+
                AND A.ENTER_CD = C.ENTER_CD
                AND TO_CHAR(TO_DATE(P_TAR_YM,'YYYYMM'),'YYYYMMDD') BETWEEN C.SDATE AND NVL(C.EDATE,'99991231')
                AND (
@@ -388,6 +401,15 @@ BEGIN
                         AND B.APPL_STATUS_CD = '99'
                         --AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'99991231'))
                         --AND (A.PAY_STS = 'P' OR ( A.PAY_STS = 'S' AND ( NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,A.USE_M_YM))))
+                        -- 추가 '25.05.29
+                        AND P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                        AND (A.USE_M_YM IS NULL 
+                             OR (
+                               A.USE_M_YM>P_TAR_YM
+                               OR
+                               A.USE_MS_YM<=P_TAR_YM
+                             )
+                        )
                        /*
                         AND (A.CHD_SDATE <= TO_CHAR(LAST_DAY(TO_DATE(P_TAR_YM||'01', 'YYYYMMDD'))+1,'YYYYMMDD')
                             AND A.CHD_EDATE >= P_TAR_YM||'01'
@@ -420,7 +442,8 @@ BEGIN
                          ) X
                   WHERE 1=1
                     AND X.RANK_SN = 1 --변경건이 최신으로 처리되도록 추가
-                    AND NOT(X.APP_GB='3' AND X.PAY_STS='F') -- 지급중단 제외
+                    --지급상태 제거 2025.05.29
+                    --AND NOT(X.APP_GB='3' AND X.PAY_STS='F') -- 지급중단 제외
                     AND NOT EXISTS ( -- 퇴직자 제외
                         SELECT 1 FROM THRM151 W
                         WHERE W.ENTER_CD = X.ENTER_CD
