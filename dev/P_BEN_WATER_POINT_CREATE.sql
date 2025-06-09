@@ -58,6 +58,8 @@ BEGIN
 									 				 THEN 40 
                                                      WHEN X.ENTER_CD = 'KS' AND X.SABUN IN ('2300815','2200320','2302727')
                                                      THEN 20
+                                                     WHEN X.ENTER_CD = 'KS' AND X.SABUN IN ('2501886')
+                                                     THEN 30
                                                      ELSE X.NEW_POINT 
                                                      END),
                                         0)
@@ -87,6 +89,8 @@ BEGIN
 			 					   THEN 40 
                                    WHEN C.ENTER_CD = 'KS' AND C.SABUN IN ('2300815','2200320','2302727')
                                    THEN 20
+                                   WHEN C.ENTER_CD = 'KS' AND C.SABUN IN ('2501886')
+                                   THEN 30
                                    ELSE A.WTR_PNT 
                                    END,
                                    0) AS NEW_POINT
@@ -100,6 +104,8 @@ BEGIN
 			 								 THEN 40 
                                              WHEN C.ENTER_CD = 'KS' AND C.SABUN IN ('2300815','2200320','2302727')
                                              THEN 20
+                                             WHEN C.ENTER_CD = 'KS' AND C.SABUN IN ('2501886')
+                                             THEN 30
                                              ELSE A.WTR_PNT 
                                              END,0)
 						 						/WTR_PNT) * BOX_AMT FROM TBEN590
