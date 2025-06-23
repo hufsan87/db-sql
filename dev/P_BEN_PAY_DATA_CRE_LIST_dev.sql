@@ -1182,7 +1182,7 @@ BEGIN
 																				   AND AA.ENTER_CD = B.ENTER_CD
 																				   AND AA.GUBUN ='B01'
 																				   AND AA.CODE_VAL IN( '01','05') -- 임원제외
-																				   AND AA.ENTER_CD != 'HT' -- 한진관광은 임원 포함
+																				   AND AA.ENTER_CD NOT IN ('HT','TP') -- 한진관광은 임원 포함 20250618 TP 포함
 																				   AND AA.CODE = F_COM_GET_JIKGUB_CD (B.ENTER_CD, B.SABUN, P_CPN201.PAYMENT_YMD)
 																				   AND P_CPN201.PAYMENT_YMD BETWEEN AA.SDATE AND NVL(AA.EDATE,'99991231')
 																				   )
