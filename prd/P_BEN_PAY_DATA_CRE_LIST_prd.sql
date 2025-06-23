@@ -834,16 +834,17 @@ BEGIN
 					--대상자의 재직상태가 작업기준일 기준 재직, 중단년월이 있고, 복구년월이 Null인 경우
 					AND C.STATUS_CD IN ('AA')
 					AND ((A.USE_M_YM IS NOT NULL AND LENGTH(TRIM(A.USE_M_YM)) = 6) AND (A.USE_MS_YM IS NULL OR A.USE_MS_YM = ''))
+                    AND F_CPN_WKP_CNT( A.ENTER_CD, A.SABUN, TO_CHAR(TRUNC(SYSDATE, 'MONTH'), 'YYYYMMDD'), TO_CHAR(LAST_DAY(SYSDATE), 'YYYYMMDD')) >= 15			--현재일 기준, 해당월 근무일수 15일 이상(예:휴직->복직 CASE), 2025.06.23
 					AND P_CPN201.PAY_CD <> 'A3'
-          -- 징계대상 제외 2025.04.15
-          AND A.SABUN NOT IN (
+          -- 징계대상 제외 2025.04.15 <= 2025.06.23 작업으로 징계대상 체크 불요,징계 기간은 근무일수에서 제외 됨.
+          /*AND A.SABUN NOT IN (
             SELECT SABUN FROM THRM129 
             WHERE 1=1
             AND ENTER_CD = A.ENTER_CD
             AND PUNISH_CD IN ('rRI_010','rRI_011','rRI_012','rRI_013') --징계코드(H20270)
             AND lv_pay_ym BETWEEN SUBSTR(SDATE,1,6) AND SUBSTR(EDATE,1,6)
             AND (TO_NUMBER(SUBSTR(SDATE, 7,2)) >= 15 OR TO_NUMBER(SUBSTR(EDATE,7,2)) < 15)
-          )
+          )*/
 			)
 				  -- 필수사항, 종료 아닐때만, 종료년월이 없더라도 담당자가 수정했을 경우가 있기 대문에
 					AND A.PAY_STS <> 'F'
