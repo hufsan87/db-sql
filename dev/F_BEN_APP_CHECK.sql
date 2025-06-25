@@ -86,6 +86,16 @@ BEGIN
                     RETURN '장기근속 여행 대상자 조회 시 오류가 발생했습니다.'||SQLERRM;
             END;
         END IF;
+
+        ------------------------------------------------------------------------
+        -- 특수교육비 대상자 체크 102
+        ------------------------------------------------------------------------
+        IF P_APPL_CD = '102' THEN
+            --재직상태 체크
+            IF F_COM_GET_STATUS_CD(P_ENTER_CD, P_SABUN, TO_CHAR(SYSDATE, 'YYYYMMDD')) != 'AA' THEN --(참고) CA, EA 휴지, 정직
+                RETURN '재직자만 신청할 수 있습니다.';
+            END IF;
+        END IF;
     END;
 
     RETURN lv_result;
