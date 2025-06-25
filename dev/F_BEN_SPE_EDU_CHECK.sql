@@ -25,7 +25,25 @@ IS
     -- 임원인 경우, 특수교육비신청 6개월 근속 제외(HX only)
     lv_immonYn VARCHAR2(10) := 'N';
     lv_jikgub_cd THRM151.JIKGUB_CD%TYPE;
+
+    lv_from_date_m1       VARCHAR2(8);
+    lv_to_date_m1         VARCHAR2(8);
+    lv_from_date_m2       VARCHAR2(8);
+    lv_to_date_m2         VARCHAR2(8);
+    lv_from_date_m3       VARCHAR2(8);
+    lv_to_date_m3         VARCHAR2(8);
+
+    ln_work_days_m1       NUMBER;
+    ln_work_days_m2       NUMBER;
+    ln_work_days_m3       NUMBER;
     
+    rtStr_json VARCHAR2(1000); --단순 오류 리턴이 아니라, 로직터리를 위한 파싱용 문자열 생성 용(예 : 근무일수가 15일 미만인 월 리턴 => 'ShortWorkDay'||1월,2월)
+    rtStrM1 VARCHAR2(10) := '';
+    rtStrM2 VARCHAR2(10) := '';
+    rtStrM3 VARCHAR2(10) := '';
+    rtStrFlag1 BOOLEAN := FALSE;
+    rtStrFlag2 BOOLEAN := FALSE;
+    rtStrFlag3 BOOLEAN := FALSE;
 BEGIN
     lv_result := 'OK';
 
@@ -55,6 +73,68 @@ BEGIN
     IF F_COM_GET_STATUS_CD(P_ENTER_CD, P_SABUN, TO_CHAR(SYSDATE, 'YYYYMMDD')) != 'AA' THEN --(참고) CA, EA 휴지, 정직
         RETURN '재직자에 한하여 신청 가능합니다.';
     END IF;
+
+    --분기, 각 해당월에 대한 근무일수 < 15, 신청금액 > 0  체크
+    CASE P_DIV_CD
+    WHEN '1' THEN -- 1분기 (1월, 2월, 3월)
+            lv_from_date_m1 := P_APP_YEAR || '0101';
+            lv_to_date_m1 := P_APP_YEAR || '01' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '01', 'YYYYMM')), 'DD');
+            lv_from_date_m2 := P_APP_YEAR || '0201';
+            lv_to_date_m2 := P_APP_YEAR || '02' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '02', 'YYYYMM')), 'DD');
+            lv_from_date_m3 := P_APP_YEAR || '0301';
+            lv_to_date_m3 := P_APP_YEAR || '03' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '03', 'YYYYMM')), 'DD');
+    WHEN '2' THEN -- 2분기 (4월, 5월, 6월)
+            lv_from_date_m1 := P_APP_YEAR || '0401';
+            lv_to_date_m1 := P_APP_YEAR || '04' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '04', 'YYYYMM')), 'DD');
+            lv_from_date_m2 := P_APP_YEAR || '0501';
+            lv_to_date_m2 := P_APP_YEAR || '05' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '05', 'YYYYMM')), 'DD');
+            lv_from_date_m3 := P_APP_YEAR || '0601';
+            lv_to_date_m3 := P_APP_YEAR || '06' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '06', 'YYYYMM')), 'DD');
+    WHEN '3' THEN -- 3분기 (7월, 8월, 9월)
+            lv_from_date_m1 := P_APP_YEAR || '0701';
+            lv_to_date_m1 := P_APP_YEAR || '07' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '07', 'YYYYMM')), 'DD');
+            lv_from_date_m2 := P_APP_YEAR || '0801';
+            lv_to_date_m2 := P_APP_YEAR || '08' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '08', 'YYYYMM')), 'DD');
+            lv_from_date_m3 := P_APP_YEAR || '0901';
+            lv_to_date_m3 := P_APP_YEAR || '09' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '09', 'YYYYMM')), 'DD');
+    WHEN '4' THEN -- 4분기 (10월, 11월, 12월)
+            lv_from_date_m1 := P_APP_YEAR || '1001';
+            lv_to_date_m1 := P_APP_YEAR || '10' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '10', 'YYYYMM')), 'DD');
+            lv_from_date_m2 := P_APP_YEAR || '1101';
+            lv_to_date_m2 := P_APP_YEAR || '11' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '11', 'YYYYMM')), 'DD');
+            lv_from_date_m3 := P_APP_YEAR || '1201';
+            lv_to_date_m3 := P_APP_YEAR || '12' || TO_CHAR(LAST_DAY(TO_DATE(P_APP_YEAR || '12', 'YYYYMM')), 'DD');
+    ELSE
+            RETURN '유효하지 않은 분기입니다: ' || P_DIV_CD;
+    END CASE;
+
+    ln_work_days_m1 := F_CPN_WKP_CNT(P_ENTER_CD, P_SABUN, lv_from_date_m1, lv_to_date_m1);
+    ln_work_days_m2 := F_CPN_WKP_CNT(P_ENTER_CD, P_SABUN, lv_from_date_m2, lv_to_date_m2);
+    ln_work_days_m3 := F_CPN_WKP_CNT(P_ENTER_CD, P_SABUN, lv_from_date_m3, lv_to_date_m3);
+
+    --for test
+        --ln_work_days_m1 := 14;
+        --ln_work_days_m3 := 14;
+
+    IF ln_work_days_m1 < 15 AND P_APPL_MON1 > 0 THEN rtStrM1 := SUBSTR(lv_from_date_m1, 5, 2)||'월'; rtStrFlag1 := TRUE;  END IF;
+    IF ln_work_days_m2 < 15 AND P_APPL_MON2 > 0 THEN rtStrM2 := SUBSTR(lv_from_date_m2, 5, 2)||'월'; rtStrFlag2 := TRUE;  END IF;
+    IF ln_work_days_m3 < 15 AND P_APPL_MON3 > 0 THEN rtStrM3 := SUBSTR(lv_from_date_m3, 5, 2)||'월'; rtStrFlag3 := TRUE;  END IF;
+
+    IF rtStrFlag1 THEN  IF SUBSTR(rtStrM1,1,1) ='0' THEN rtStrM1 := SUBSTR(rtStrM1,2,1)||'월 '; END IF; END IF;
+    IF rtStrFlag2 THEN  IF SUBSTR(rtStrM2,1,1) ='0' THEN rtStrM2 := SUBSTR(rtStrM2,2,1)||'월 '; END IF; END IF;
+    IF rtStrFlag3 THEN  IF SUBSTR(rtStrM3,1,1) ='0' THEN rtStrM3 := SUBSTR(rtStrM3,2,1)||'월 '; END IF; END IF;
+
+
+    IF rtStrFlag1 OR rtStrFlag2 OR rtStrFlag3 THEN RETURN  rtStrM1||rtStrM2||rtStrM3||' 신청금액을 0원으로 변경 후 신청하여 주십시오.(근무일수 15일 이상 필요)'; END IF;
+
+    --    rtStr_json := '{"title" : "'||lv_object_nm||'", "m1":"'||rtStrM1||'", "m2":"'||rtStrM2||'", "m3":"'||rtStrM3||'"}';
+    --    RETURN rtStr_json;
+    
+
+    --신청금액 0 체크
+    IF P_APPL_MON = 0 THEN RETURN '신청금액이 없습니다.'; END IF;
+
+
     ------------------------------------------------------------------------------------------------------------------------
     -- 2. 부부직원 신청건 체크
     ------------------------------------------------------------------------------------------------------------------------
