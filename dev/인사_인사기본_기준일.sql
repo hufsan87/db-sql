@@ -25,8 +25,16 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "PAWS_HG_PRD"."인사_인사기본_기�
              --   AS "최초입사일",
              TO_CHAR (TO_DATE (K.GEMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
                  AS "그룹입사일",
-             TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
-                 AS "소속입사일",
+             --TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
+             --    AS "소속입사일",
+             CASE
+             WHEN K.ENTER_CD='KS'
+             THEN (
+                SELECT  TO_CHAR(TO_DATE(NVL(ZZ.YEAR_YMD, ZZ.GEMP_YMD),'YYYYMMDD'), 'YYYY-MM-DD') FROM THRM100 ZZ WHERE ZZ.ENTER_CD='KS' AND ZZ.SABUN=K.SABUN
+                )                
+             ELSE
+                TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
+             END AS "소속입사일",
              F_COM_GET_CAREER_CNT (K.ENTER_CD,
                                    K.SABUN,
                                    'W',
@@ -551,4 +559,3 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "PAWS_HG_PRD"."인사_인사기본_기�
                  K.SABUN,
                  NVL (REPLACE ('@viewSearchDate@', '-', ''),
                       TO_CHAR (SYSDATE, 'YYYYMMDD')));
-
