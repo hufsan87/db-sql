@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION F_BEN_SPE_EDU_CHECK(
+create or replace FUNCTION F_BEN_SPE_EDU_CHECK(
 	P_ENTER_CD 	IN VARCHAR2,
 	P_APPL_SEQ 	IN VARCHAR2,
 	P_SABUN 	IN VARCHAR2,
@@ -36,7 +36,7 @@ IS
     ln_work_days_m1       NUMBER;
     ln_work_days_m2       NUMBER;
     ln_work_days_m3       NUMBER;
-    
+
     rtStr_json VARCHAR2(1000); --단순 오류 리턴이 아니라, 로직터리를 위한 파싱용 문자열 생성 용(예 : 근무일수가 15일 미만인 월 리턴 => 'ShortWorkDay'||1월,2월)
     rtStrM1 VARCHAR2(10) := '';
     rtStrM2 VARCHAR2(10) := '';
@@ -129,7 +129,7 @@ BEGIN
 
     --    rtStr_json := '{"title" : "'||lv_object_nm||'", "m1":"'||rtStrM1||'", "m2":"'||rtStrM2||'", "m3":"'||rtStrM3||'"}';
     --    RETURN rtStr_json;
-    
+
 
     --신청금액 0 체크
     IF P_APPL_MON = 0 THEN RETURN '신청금액이 없습니다.'; END IF;
@@ -200,7 +200,7 @@ BEGIN
 	IF ln_cnt > 0 THEN
 		RETURN '동일한 신청 건이 있어 신청 할 수 없습니다.('||P_FAM_NM||', '||P_APP_YEAR||'년'||REPLACE(P_DIV_CD,'0','')||'분기)';
 	END IF;
-    
+
     ------------------------------------------------------------------------------------------------------------------------
     -- 4.지급한도 체크, 월&분기
     ------------------------------------------------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ BEGIN
 	THEN
 		RETURN '특수교육비 지원금은 월간 '|| FUNC_COMMA(lv_ben770.MAX_M_AMT, 0 )||'원까지 가능합니다.';
 	END IF;
-	
+
 	IF P_APPL_MON > lv_ben770.MAX_Q_AMT
 	THEN
 		RETURN '특수교육비 지원금은 분기 '|| FUNC_COMMA(lv_ben770.MAX_Q_AMT, 0 )||'원까지 가능합니다.';
@@ -238,10 +238,10 @@ BEGIN
 	IF TO_NUMBER(P_APP_YEAR) - TO_NUMBER(SUBSTR(P_FAM_YMD, 1, 4)) > TO_NUMBER(lv_ben770.AGE_LMT) THEN
 		RETURN '특수교육비 대상자 나이는 18세(만)까지 신청 가능합니다.';
 	END IF;
-	 
-	 
-	 
+
+
+
 	--END OF CHECK
-	
+
    RETURN lv_result;
 END;
