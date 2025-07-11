@@ -1,0 +1,62 @@
+push서비스 시, HttpServerErrorException: 504 Gateway Timeout, 서비스 업체(?) connection timeout exception handling 필요
+
+prd2
+2025-07-11 16:22:44,808 ERROR [org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler] (push-async-1) Unexpected error occurred invoking async method 'public void com.isu.ifm.AsyncService.push(java.lang.String,java.util.Map) throws java.lang.InterruptedException'.: org.springframework.web.client.HttpServerErrorException: 504 Gateway Timeout
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:97)
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:79)
+	at org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63)
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:777)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:730)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:686)
+	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:468)
+	at com.isu.ifm.AsyncService.push(AsyncService.java:50)
+	at com.isu.ifm.AsyncService$$FastClassBySpringCGLIB$$4665e047.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:747)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:115)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+
+
+prd1
+2025-07-11 16:20:29,110 ERROR [org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler] (push-async-1) Unexpected error occurred invoking async method 'public void com.isu.ifm.AsyncService.push(java.lang.String,java.util.Map) throws java.lang.InterruptedException'.: org.springframework.web.client.HttpServerErrorException: 504 Gateway Timeout
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:97)
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:79)
+	at org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63)
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:777)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:730)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:686)
+	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:468)
+	at com.isu.ifm.AsyncService.push(AsyncService.java:50)
+	at com.isu.ifm.AsyncService$$FastClassBySpringCGLIB$$4665e047.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:747)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:115)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+
+2025-07-11 16:25:29,063 ERROR [org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler] (push-async-2) Unexpected error occurred invoking async method 'public void com.isu.ifm.AsyncService.push(java.lang.String,java.util.Map) throws java.lang.InterruptedException'.: org.springframework.web.client.HttpServerErrorException: 504 Gateway Timeout
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:97)
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:79)
+	at org.springframework.web.client.ResponseErrorHandler.handleError(ResponseErrorHandler.java:63)
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:777)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:730)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:686)
+	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:468)
+	at com.isu.ifm.AsyncService.push(AsyncService.java:50)
+	at com.isu.ifm.AsyncService$$FastClassBySpringCGLIB$$4665e047.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:747)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:115)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+
