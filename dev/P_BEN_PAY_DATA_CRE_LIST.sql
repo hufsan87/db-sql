@@ -2728,6 +2728,101 @@ BEGIN
 			P_SQLERRM := 'PM수당(77)_TBEN997 작업중 에러 => ' || NVL(P_SQLERRM,SQLERRM);
 			P_COM_SET_LOG(P_ENTER_CD, LV_BIZ_CD, LV_OBJECT_NM,'77-2',P_SQLERRM, P_CHKID);
 		END;
+--------------------
+  -- 81 : 특수교육비
+--------------------
+  WHEN '81' THEN
+DBMS_OUTPUT.PUT_LINE('START CHK HSLEE');
+	/* 1차 때는 마감시 상태값 조정을 다했지만
+	   통테때 변경사항으로 복리후생쪽에서 내역생성 후 내역을 가져오는 방법으로 변경
+			81-1
+			TBEN771 (보육비 신청/승인) 시작년월~종료년월 사이에 해당되고 지급상태="지급"인  대상자의 지급금액 합) => TBEN997에 급여년월, 지급금액 등록
+	*/
+		BEGIN
+			INSERT INTO TBEN997
+			SELECT B.ENTER_CD, P_CPN201.PAY_ACTION_CD, P_BENEFIT_BIZ_CD, B.SABUN, SUM(B.PAY_AMT) AS PAY_AMT, B.PAY_YM, '10003', SYSDATE, P_CHKID
+			FROM TCPN201 A, TBEN771 B
+			WHERE 1=1
+				AND A.ENTER_CD 			= P_ENTER_CD
+			  AND A.PAY_ACTION_CD = P_CPN201.PAY_ACTION_CD
+			-- B
+			  AND A.ENTER_CD = B.ENTER_CD
+				AND A.PAY_YM = B.PAY_YM
+				AND P_CPN201.PAY_CD = 'A1'
+			GROUP BY B.ENTER_CD, B.PAY_YM, B.SABUN
+			;
+		EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
+			P_SQLCODE := TO_CHAR(SQLCODE);
+			P_SQLERRM := '특수교육비(81)_TBEN997 작업중 에러 => ' || NVL(P_SQLERRM,SQLERRM);
+			P_COM_SET_LOG(P_ENTER_CD, LV_BIZ_CD, LV_OBJECT_NM,'81-1',P_SQLERRM, P_CHKID);
+		END;
+
+		BEGIN
+			INSERT INTO TBEN777
+			SELECT A.ENTER_CD, A.PAY_ACTION_CD, A.SABUN, A.BEN_GUBUN, A.SEQ + ROWNUM, A.BUSINESS_PLACE_CD, A.PAY_YMD, NULL
+			     , A.MON1, A.MON2, A.MON3, A.MON4, A.MON5, A.MON6, A.MON7, A.MON8, A.MON9, A.MON10, A.MON11, A.MON12
+			     , A.PAY_MEMO, A.PAY_EXCEPT_GUBUN, A.MEMO, A.CHKDATE, A.CHKID
+			FROM (SELECT X.ENTER_CD
+						 , P_CPN201.PAY_ACTION_CD
+				 		 , X.SABUN
+				 		 , P_BENEFIT_BIZ_CD    AS BEN_GUBUN
+					     , (SELECT NVL(MAX(SEQ),0) AS SEQ FROM TBEN777 WHERE ENTER_CD = X.ENTER_CD) SEQ
+					     , P_BUSINESS_PLACE_CD  AS BUSINESS_PLACE_CD
+					     , P_CPN201.PAYMENT_YMD AS PAY_YMD
+					     , SUM(DECODE(X.MON1_YN, 'Y', X.PAY_AMT, 0))AS MON1 	-- 1번 금액 사용 하드코딩
+					     , SUM(DECODE(X.MON2_YN, 'Y', X.PAY_AMT, 0))AS MON2 	-- 2번 금액 사용
+					     /* 금액 종류는 1,2번만 구분해서 사용함, 전사 싱크가 맞아있는지 체크필요 [예시] 과세, 비과세 등*/
+					     , 0 AS MON3, 0 AS MON4, 0 AS MON5, 0 AS MON6, 0 AS MON7
+					     , 0 AS MON8, 0 AS MON9, 0 AS MON10, 0 AS MON11, 0 AS MON12
+					     , '' AS PAY_MEMO
+					     , DECODE(MAX(X.ELEMENT_TYPE),'A','P','D','E') AS PAY_EXCEPT_GUBUN --P지급, E공제
+					     , '' AS MEMO
+					     , SYSDATE AS CHKDATE
+					     , P_CHKID AS CHKID
+					FROM (SELECT A.ENTER_CD, A.SABUN
+                           ,(CASE WHEN B.MON1_YN = 'Y' THEN (CASE WHEN NVL(A.NTAX_AMT,0) >= NVL(A.PAY_AMT,0) THEN NVL(A.PAY_AMT,0) ELSE NVL(A.NTAX_AMT,0) END)  --  비과세
+                                  WHEN B.MON2_YN = 'Y' THEN (CASE WHEN NVL(A.PAY_AMT,0) > NVL(A.NTAX_AMT,0) THEN NVL(A.PAY_AMT,0) - NVL(A.NTAX_AMT,0) ELSE 0 END)  --  과세
+                                  END) AS PAY_AMT
+			 		 /*, CASE WHEN B.MON1_YN = 'Y' THEN NVL(A.NTAX_AMT,0) --  비과세
+			 		 		    WHEN B.MON2_YN = 'Y' THEN CASE WHEN NVL(A.PAY_AMT,0) - NVL(A.NTAX_AMT,0) < 0 THEN 0 ELSE NVL(A.PAY_AMT,0) - NVL(A.NTAX_AMT,0) END -- 과세
+			 		 	 END AS PAY_AMT*/
+					 , B.MON1_YN, B.MON2_YN, B.MON3_YN, B.MON4_YN,  B.MON5_YN,  B.MON6_YN
+					 , B.MON7_YN, B.MON8_YN, B.MON9_YN, B.MON10_YN, B.MON11_YN, B.MON12_YN
+					 , C.ELEMENT_TYPE, C.ELEMENT_CD
+			   FROM (SELECT ENTER_CD, SABUN, SUM(PAY_AMT) AS PAY_AMT
+			   					-- 비과세금액은 동일하기 떄문에 MAX값으로 사용할 예정
+			   						, 0 AS NTAX_AMT
+									FROM TBEN771
+								 WHERE ENTER_CD = P_ENTER_CD
+									 AND PAY_YM = lv_pay_ym
+						  GROUP BY ENTER_CD, SABUN
+                    HAVING SUM(PAY_AMT) > 0) A, TBEN005 B, TCPN011 C, TCPN203 F
+			 WHERE 1=1
+				-- B
+			   AND B.ENTER_CD = A.ENTER_CD
+			   AND B.PAY_CD   = P_CPN201.PAY_CD
+			   AND B.BENEFIT_BIZ_CD = P_BENEFIT_BIZ_CD
+				-- C
+				 AND C.ENTER_CD   = B.ENTER_CD
+			   AND C.ELEMENT_CD = B.ELEMENT_CD
+			   AND P_CPN201.PAYMENT_YMD BETWEEN C.SDATE AND NVL(C.EDATE,'99991231')
+			-- F
+				AND A.ENTER_CD = F.ENTER_CD
+				AND A.SABUN    = F.SABUN
+				AND P_CPN201.PAY_ACTION_CD = F.PAY_ACTION_CD
+			  ) X GROUP BY X.ENTER_CD, X.SABUN
+			) A
+			;
+
+		EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
+			P_SQLCODE := TO_CHAR(SQLCODE);
+			P_SQLERRM := '자녀교육비(81)_TBEN777 작업중 에러 => ' || NVL(P_SQLERRM,SQLERRM);
+			P_COM_SET_LOG(P_ENTER_CD, LV_BIZ_CD, LV_OBJECT_NM,'54-2',P_SQLERRM, P_CHKID);
+		END;
   --------------------
   -- 85 : 식비(현금중식대)
   --------------------
