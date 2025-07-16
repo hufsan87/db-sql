@@ -1,3 +1,33 @@
+--('25.7.15)
+--복리후생 마감/급여 연동을 위하여, 급여일자 생성 후, 급여에 복리후생 항목을 추가한 경우 메뉴얼 등록
+--급여일자 삭제 후 재생성하여야하나, 이미 급여작업 진행된 상태
+SELECT A.BUSINESS_PLACE_CD
+ , A.BENEFIT_BIZ_CD
+ , A.CLOSE_ST
+ , TO_CHAR(A.CHKDATE,'YYYY-MM-DD  HH24:MI:SS') AS CHKDATE
+FROM TBEN991 A
+WHERE A.ENTER_CD		= 'HX'
+AND A.PAY_ACTION_CD	= '202507002'
+                ORDER BY A.BUSINESS_PLACE_CD, A.BENEFIT_BIZ_CD;
+                
+-- TBEN991
+--1	81	10001	2025-07-14  15:58:16
+--HX	202507002	1	81	10001		25/07/14	test128
+SELECT *
+FROM TBEN991 A
+WHERE A.ENTER_CD		= 'HX'
+AND A.PAY_ACTION_CD	= '202507002';
+--DELETE TBEN991
+--WHERE ENTER_CD='HX' AND PAY_ACTION_CD='202507002' AND benefit_biz_cd='81';
+
+--INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10001','',SYSDATE, 'test128');--작업전
+--INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10003','',SYSDATE, 'test128');--작업후
+--INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10005','',SYSDATE, 'test128');--마감후
+
+COMMIT;
+
+select * from tben777 where enter_cd='HX' AND PAY_ACTION_CD='202507002' and ben_gubun='81';
+------------------------------------------------------------------------------------------------------------------------
   CREATE TABLE "PAWS_HG_PRD"."TBEN770" 
    (	"ENTER_CD" VARCHAR2(10 BYTE), 
 	"SDATE" VARCHAR2(8 BYTE), 
@@ -194,31 +224,3 @@ CREATE TABLE "PAWS_HG_PRD"."TBEN771"
    COMMENT ON TABLE "PAWS_HG_PRD"."TBEN771"  IS '특수교육비 신청/승인';
 
 -----------------------------------------------------------------------------------------
---복리후생 마감/급여 연동을 위하여, 급여일자 생성 후, 급여에 복리후생 항목을 추가한 경우 메뉴얼 등록
---급여일자 삭제 후 재생성하여야하나, 이미 급여작업 진행된 상태
-SELECT A.BUSINESS_PLACE_CD
- , A.BENEFIT_BIZ_CD
- , A.CLOSE_ST
- , TO_CHAR(A.CHKDATE,'YYYY-MM-DD  HH24:MI:SS') AS CHKDATE
-FROM TBEN991 A
-WHERE A.ENTER_CD		= 'HX'
-AND A.PAY_ACTION_CD	= '202507002'
-                ORDER BY A.BUSINESS_PLACE_CD, A.BENEFIT_BIZ_CD;
-                
--- TBEN991
---1	81	10001	2025-07-14  15:58:16
---HX	202507002	1	81	10001		25/07/14	test128
-SELECT *
-FROM TBEN991 A
-WHERE A.ENTER_CD		= 'HX'
-AND A.PAY_ACTION_CD	= '202507002';
---DELETE TBEN991
---WHERE ENTER_CD='HX' AND PAY_ACTION_CD='202507002' AND benefit_biz_cd='81';
-
---INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10001','',SYSDATE, 'test128');--작업전
---INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10003','',SYSDATE, 'test128');--작업후
---INSERT INTO TBEN991 VALUES('HX','202507002','1','81','10005','',SYSDATE, 'test128');--마감후
-
-COMMIT;
-
-select * from tben777 where enter_cd='HX' AND PAY_ACTION_CD='202507002' and ben_gubun='81';
