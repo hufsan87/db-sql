@@ -159,7 +159,7 @@
 
     // 30분 단위 컬럼
     initdata1.Cols[v++] = {
-     Header: "|30분", // 상단 헤더: 비워둠 (이전 컬럼과 병합), 하단 헤더: "30분"
+     Header: (i + "시") + "|30분", // 상단 헤더: 비워둠 (이전 컬럼과 병합), 하단 헤더: "30분"
      Type: "Text",
      Width: hourWidth,
      Align: "Center",
@@ -221,6 +221,7 @@
 
    $(window).smartresize(sheetResize);
    sheetInit();
+   mergeHeader();
 
    // 시트가 DOM에 완전히 렌더링될 시간을 주기 위해 setTimeout 사용
    setTimeout(function() {
@@ -252,6 +253,36 @@
      break;
    }
   }
+
+  function mergeHeader(){
+   var titleRowIdx = 0;
+   var rowIdx = sheet1.HeaderRows()-1;
+
+   var startIdx1 = sheet1.SaveNameCol( 'Hour_0_0');
+   for (var h = 0; h < 24; h++) {
+
+    // 셀 병합: SetMergeCell(Row, Col, RowSpan, ColSpan)
+    sheet1.SetMergeCell(titleRowIdx, startIdx1, 1, ((startIdx1+47) - startIdx1 + 1));
+
+    // 병합된 셀에 "연차" 텍스트 설정 (시작 셀에만 설정)
+    sheet1.SetCellValue(titleRowIdx, startIdx1, '근무시간');
+    //sheet1.SetCellAlign(rowIdx, leaveStartColIdx, "Center"); // 중앙 정렬
+
+   }
+
+   for (var h = 0; h < 24; h++) {
+    var startIdx = sheet1.SaveNameCol( 'Hour_' + h + '_0');
+    // 셀 병합: SetMergeCell(Row, Col, RowSpan, ColSpan)
+    sheet1.SetMergeCell(rowIdx, startIdx, 1, ((startIdx+1) - startIdx + 1));
+
+    // 병합된 셀에 "연차" 텍스트 설정 (시작 셀에만 설정)
+    sheet1.SetCellValue(rowIdx, startIdx, h+'시');
+    //sheet1.SetCellAlign(rowIdx, leaveStartColIdx, "Center"); // 중앙 정렬
+
+   }
+  }
+
+
 
   // 데이터를 로드하고 시트에 표시하는 함수 (시간대별 처리 추가)
   function loadSheetData() {
@@ -339,6 +370,7 @@
      }
     }
    }
+
   }
 
   // 시간대별 샘플 데이터 (30분 단위 포함)
