@@ -1,3 +1,396 @@
+(7/17 Thursday) 
+--근태코드 : 근무/연차/반차...
+--근무/연차/반차 : 시작시간~종료시간 (09:00~16:00, 08:30~17:30, ...)
+    --연차일경우, 원래 근무시작시간~근무종료시간?
+
+
+select a.table_name,a.comments,b.column_name,b.comments
+from USER_TAB_COMMENTS a,USER_col_comments b
+WHERE a.table_name=b.table_name
+and a.table_name NOT like 'SYS%'
+ and (a.comments like '%유연근무%' or b.comments like '%유연근무%');
+
+SELECT * FROM TTIM131 WHERE ENTER_CD='HX' AND SABUN='09700062' ORDER BY APPL_sEQ DESC;
+--HX	20250709000329	09700062	20250710	20250809	T010	25/07/09	09700062	99	
+--FLEXIBLE_TYPE=T010, APPL_STATUS_CD='99'
+
+SELECT * fROM TSYS005 WHERE GRCODE_CD='T20020' AND ENTER_CD='HX';
+
+select * from TSYS920
+where n_title like '%노무%';
+
+SELECT F_TIM_GET_DAY_GNT_CD('HX','20240040','20250717') GNT_CD FROM DUAL;
+
+--[1]근태코드
+SELECT F_TIM_GET_DAY_GNT_CD('HX','09700062','20250717') GNT_CD FROM DUAL;
+ 
+ --[2]in_hm, out_hm
+select * From TTIM335;
+select * from TTIM335 where enter_cd='HX' and sabun='09700062' and ymd= '20250617';
+--[3] wrok_shm
+select * From TTIM017 where enter_cd='HX'; 
+select * from TTIM120_V where enter_cd='HX' and sabun='09700062' and ymd= '20250618';
+
+SELECT * FROM TTIM301;--SABUN,S_YMD~E_YMD,GNT_CD
+SELECT * FROM TTIM301 where enter_cd='HX' and sabun='09700062' and s_ymd>='20250601';--SABUN,S_YMD~E_YMD,GNT_CD
+
+
+
+--[1]
+       SELECT RANK() OVER (ORDER BY A.GNT_CD, A.YMD) AS NUM
+            , A.GNT_CD
+            , (SELECT GNT_NM FROM TTIM014 WHERE ENTER_CD = A.ENTER_CD AND GNT_CD = A.GNT_CD) AS GNT_NM
+         FROM TTIM405 A , THRI103 B, TTIM301 C
+        WHERE A.ENTER_CD = B.ENTER_CD
+          AND A.APPL_SEQ = B.APPL_SEQ
+          AND A.ENTER_CD = C.ENTER_CD
+          AND A.APPL_SEQ = C.APPL_SEQ
+          AND NVL(A.UPDATE_YN,'N') = 'N'
+          AND B.APPL_STATUS_CD = '99'
+          AND A.ENTER_CD = 'HX'
+          AND A.SABUN    = '20240040'
+          AND A.YMD      = '20250717'  ;
+          
+select A.* From TTIM335 A
+WHERE 1=1
+          AND A.ENTER_CD = 'HX'
+          AND A.SABUN    = '20240040'
+    AND A.YMD='20250717'
+; --[2]in_hm, out_hm
+select A.* From TTIM017 A 
+WHERE 1=1
+          AND A.ENTER_CD = 'HX'
+          AND A.TIME_CD    = '10000'
+    ; --[3] wrok_shm
+
+
+
+
+          
+SELECT * FROM TTIM405 
+WHERE 1=1
+AND ENTER_CD='HX' 
+AND SABUN='20240040'
+ORDER BY CHKDATE DESC
+;--SABUN,YM,GNT_CD
+
+
+
+SELECT * FROM TTIM301;--SABUN,S_YMD~E_YMD,GNT_CD
+
+SELECT ENTER_CD,GNT_CD FROM TTIM014 WHERE GNT_NM LIKE '%반차';
+
+
+          
+          
+
+SELECT
+                    X.CODE
+                    ,CASE WHEN LENGTH(X.CODE_NM) > 2 THEN SUBSTR(CODE_NM,0,2)||CHR(13)||CHR(10)||SUBSTR(CODE_NM,3) ELSE X.CODE_NM END AS CODE_NM
+                    ,X.SAVE_NAME
+                    ,X.SAVE_NAME_DISP
+                    ,X.CD_TYPE
+                    ,X.TYPE
+                    ,X.FORMAT
+                FROM(
+                    SELECT A.WORK_CD AS CODE
+                         , B.WORK_NM AS CODE_NM
+                         , 'WORK_CD_' || ROW_NUMBER() over (ORDER BY A.SEQ) AS SAVE_NAME
+                         , 'workCd' || ROW_NUMBER() over (ORDER BY A.SEQ) AS SAVE_NAME_DISP
+                         , B.CD_TYPE
+                         , F_COM_GET_GRCODE_NOTE_VAL(A.ENTER_CD, 'T10030', B.CD_TYPE, 1) AS TYPE
+                         , F_COM_GET_GRCODE_NOTE_VAL(A.ENTER_CD, 'T10030', B.CD_TYPE, 2) AS FORMAT
+                    FROM TTIM355 A, TTIM015 B
+                    WHERE 1 = 1
+                      AND A.ENTER_CD = B.ENTER_CD
+                      AND A.WORK_CD = B.WORK_CD
+                      AND B.ENTER_CD = 'HX'
+                      AND A.WORK_GUBUN_CD = 'A'
+                ) X;
+                
+				SELECT A.TIME_CD AS CODE
+				     , A.SHORT_TERM AS CODE_NM
+				  FROM TTIM017 A
+				 WHERE 1 = 1
+				   AND A.ENTER_CD = 'HX'
+				 ORDER BY SEQ;
+                 
+SELECT
+                    X.CODE
+                    ,CASE WHEN LENGTH(X.CODE_NM) > 2 THEN SUBSTR(CODE_NM,0,2)||CHR(13)||CHR(10)||SUBSTR(CODE_NM,3) ELSE X.CODE_NM END AS CODE_NM
+                    ,X.SAVE_NAME
+                    ,X.SAVE_NAME_DISP
+                    ,X.CD_TYPE
+                    ,X.TYPE
+                    ,X.FORMAT
+                FROM(
+                    SELECT A.WORK_CD AS CODE
+                         , B.WORK_NM AS CODE_NM
+                         , 'WORK_CD_' || ROW_NUMBER() over (ORDER BY A.SEQ) AS SAVE_NAME
+                         , 'workCd' || ROW_NUMBER() over (ORDER BY A.SEQ) AS SAVE_NAME_DISP
+                         , B.CD_TYPE
+                         , F_COM_GET_GRCODE_NOTE_VAL(A.ENTER_CD, 'T10030', B.CD_TYPE, 1) AS TYPE
+                         , F_COM_GET_GRCODE_NOTE_VAL(A.ENTER_CD, 'T10030', B.CD_TYPE, 2) AS FORMAT
+                    FROM TTIM355 A, TTIM015 B
+                    WHERE 1 = 1
+                      AND A.ENTER_CD = B.ENTER_CD
+                      AND A.WORK_CD = B.WORK_CD
+                      AND B.ENTER_CD = 'HX'
+                      AND A.WORK_GUBUN_CD = 'A'
+                ) X;
+                
+SELECT A.*
+
+                      , NVL((CASE WHEN HOLIDAY_NM IS NOT NULL THEN HOLIDAY_NM WHEN A.WORK_YN = 'Y' THEN '휴일' ELSE HOLIDAY_NM END), '평일') AS DAY_DIV
+
+                      , (CASE WHEN HOLIDAY_NM IS NOT NULL OR A.WORK_YN = 'Y' THEN '#ef519c' ELSE '' END) AS DAY_NM_FONT_COLOR
+                      , (CASE WHEN HOLIDAY_NM IS NOT NULL OR A.WORK_YN = 'Y' THEN '#ef519c' ELSE '' END) AS DAY_DIV_FONT_COLOR
+                      , (CASE WHEN HOLIDAY_NM IS NOT NULL OR A.WORK_YN = 'Y' THEN '#ef519c' ELSE '' END) AS YMD_FONT_COLOR
+
+                      , (CASE WHEN HOLIDAY_NM IS NULL AND A.WORK_YN = 'N' THEN 'N' ELSE 'Y' END) AS HOLIDAY_DIV
+
+                      , (CASE WHEN TO_CHAR(SYSDATE,'YYYYMMDD') > A.YMD THEN (CASE WHEN A.WORK_YN = 'N' AND (A.IN_HM IS NULL OR A.OUT_HM IS NULL) 
+                                                                                  THEN (CASE WHEN A.GNT_CD = '결근' THEN 'X'
+                                                                                             WHEN A.GNT_CD IS NOT NULL THEN 'O' 
+                                                                                             ELSE 'X' END
+                                                                                        ) 
+                                                                                   ELSE 'O' END
+                                                                             )
+                              ELSE NULL END) AS WORK_FLAG
+                  FROM (
+			                SELECT TO_CHAR(TO_DATE(A.YMD, 'YYYYMMDD'), 'YYYY-MM-DD') || ' (' || A.DAY_NM  || ')' AS V_YMD
+			                     , A.YMD
+			                     , C.TIME_CD
+			                     , C.WORK_ORG_CD
+			                     , C.WORK_YN
+			                     , F_TIM_GET_DAY_GNT_NM(A.ENTER_CD, A.SABUN, A.YMD) AS GNT_CD
+			                     , B.IN_HM
+			                     , B.OUT_HM
+
+								 , (CASE WHEN B.IN_HM IS NOT NULL AND B.OUT_HM IS NOT NULL THEN F_TIM_GET_WORK_TERM_TIME(A.ENTER_CD,A.SABUN,A.YMD,B.IN_HM,B.OUT_HM) ELSE NULL END) AS WORK_TIME
+				                 , F_TIM_WORK_HM_TEXT(A.ENTER_CD, A.SABUN, A.YMD) AS REAL_WORK_TIME
+
+			                     , D.WORKDAY_STD
+			                     , NVL(C.SHM, CASE WHEN C.WORK_YN = 'N' THEN D.WORK_SHM ELSE '' END) AS WORK_SHM
+			                     , NVL(C.EHM, CASE WHEN C.WORK_YN = 'N' THEN D.WORK_EHM ELSE '' END) AS WORK_EHM
+			                     --, E.BUSINESS_PLACE_CD
+			                     --, ( SELECT HOLIDAY_NM FROM TTIM001 WHERE ENTER_CD = A.ENTER_CD AND YY || MM || DD = A.YMD AND BUSINESS_PLACE_CD = E.BUSINESS_PLACE_CD) AS HOLIDAY_NM
+			                     , F_COM_GET_BP_CD(C.ENTER_CD, C.SABUN, C.YMD) AS BUSINESS_PLACE_CD
+			                     , ( SELECT HOLIDAY_NM FROM TTIM001 WHERE ENTER_CD = A.ENTER_CD AND YY || MM || DD = A.YMD AND BUSINESS_PLACE_CD = F_COM_GET_BP_CD(C.ENTER_CD, C.SABUN, C.YMD)) AS HOLIDAY_NM
+			                     , A.DAY_NM AS TEMP_DAY_NM
+
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0020') AS "WORK_CD_1"
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0040') AS "WORK_CD_2"
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0045') AS "WORK_CD_3"
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0070') AS "WORK_CD_4"
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0090') AS "WORK_CD_5"
+			                     , (SELECT LPAD(NVL(X.WORK_HH,0),2,0)||':'||LPAD(NVL(X.WORK_MM,0),2,0) 
+			                          FROM TTIM337 X 
+			                         WHERE X.ENTER_CD = B.ENTER_CD 
+			                           AND X.YMD      = B.YMD 
+			                           AND X.SABUN    = B.SABUN 
+			                           AND ( NVL(X.WORK_HH,0)> 0 OR NVL(X.WORK_MM,0)> 0 ) 
+			                           AND X.WORK_CD  = '0110') AS "WORK_CD_6"
+			                FROM (
+			                		SELECT A1.ENTER_CD
+			                             , A1.SABUN
+			                             , A1.NAME
+			                             , A2.SUN_DATE AS YMD
+			                             , A2.DAY_NM
+			                             , B.STATUS_CD
+			                             , B.JIKGUB_NM
+			                             , B.JIKWEE_NM
+			                             , B.JIKCHAK_NM
+			                             , B.MANAGE_NM
+			                             , B.SDATE
+			                             , B.ORG_CD
+			                             , B.WORK_TYPE_NM
+			                             , B.PAY_TYPE_NM
+			                          FROM THRM100 A1, THRM151 B, TSYS007 A2
+			                         WHERE A2.SUN_DATE BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','')
+			                           AND A1.ENTER_CD = TRIM( 'HX' )
+			                           AND A1.SABUN    = TRIM( '20120026' )
+			                           AND A1.ENTER_CD = B.ENTER_CD
+			                           AND A1.SABUN    = B.SABUN
+			                           AND A2.SUN_DATE BETWEEN B.SDATE AND NVL(B.EDATE, '99991231')
+
+			                     ) A
+			                     , TTIM335 B, TTIM120_V C, TTIM017 D
+			                     --, BP_V E
+			                 WHERE A.ENTER_CD = B.ENTER_CD(+)
+			                   AND A.SABUN    = B.SABUN(+)
+			                   AND A.YMD      = B.YMD(+)
+			                   AND A.ENTER_CD = C.ENTER_CD(+)
+			                   AND A.YMD      = C.YMD(+)
+			                   AND A.SABUN    = C.SABUN(+)
+			                   AND C.ENTER_CD = D.ENTER_CD
+			                   AND C.TIME_CD  = D.TIME_CD
+
+
+			                  -- AND A.ENTER_CD = E.ENTER_CD (+)
+			                  -- AND A.SABUN    = E.SABUN    (+)
+			                  -- AND A.YMD BETWEEN E.SDATE(+) AND NVL(E.EDATE(+), '99991231')
+                   ) A
+				ORDER BY A.YMD;
+
+
+WITH TMP AS (
+							SELECT A.ENTER_CD, A.YMD, A.SABUN, A.WORK_GRP_CD, A.WORK_ORG_CD
+							     , NVL(B.WORK_HH_A, 0) AS WORK_HH_A
+							     , NVL(B.WORK_HH_B, 0) AS WORK_HH_B
+							     , NVL(B.WORK_MM_A, 0) AS WORK_MM_A
+							     , NVL(B.WORK_MM_B, 0) AS WORK_MM_B
+							     , ROW_NUMBER() OVER(ORDER BY A.YMD) AS RN
+                                 , D.WEEK_START
+                                 , D.WEEK_END
+                                 , D.WEEK_CNT
+                                 , D.RNUM
+                                 , A.PLAN_WORK_YN
+							FROM TTIM120_V A
+							   , ( SELECT X.ENTER_CD, X.YMD, X.SABUN
+							           , NVL(SUM(DECODE( Y.DAY_TYPE, '101', X.WORK_HH, 0)),0) AS WORK_HH_A
+							           , NVL(SUM(DECODE( Y.DAY_TYPE, '101', 0, X.WORK_HH)),0) AS WORK_HH_B
+							           , NVL(SUM(DECODE( Y.DAY_TYPE, '101', X.WORK_MM, 0)),0) AS WORK_MM_A
+							           , NVL(SUM(DECODE( Y.DAY_TYPE, '101', 0, X.WORK_MM)),0) AS WORK_MM_B
+							         FROM TTIM337 X, TTIM015 Y
+							        WHERE X.ENTER_CD = TRIM('HX')
+							          AND X.SABUN    = TRIM( '20120026' )
+							          AND X.YMD BETWEEN TO_CHAR(TO_DATE(REPLACE('20250713','-',''),'YYYYMMDD')-7,'YYYYMMDD') AND TO_CHAR(TO_DATE(REPLACE('20250719','-',''),'YYYYMMDD')+7,'YYYYMMDD')
+							          AND X.ENTER_CD = Y.ENTER_CD
+							          AND X.WORK_CD  = Y.WORK_CD
+							          AND Y.DAY_TYPE IN ('101', '105' ) --  정규근무(101),야간근무(103),연장근무(105)--휴일근무(201),휴일야간근무(203),휴일연장근무(205)
+							        GROUP BY X.ENTER_CD, X.YMD, X.SABUN
+							     ) B      
+                                , (
+                                      SELECT TO_CHAR(WEEK_START, 'YYYYMMDD') WEEK_START
+                                           , TO_CHAR(WEEK_END, 'YYYYMMDD') WEEK_END
+                                           , ROW_NUMBER()OVER(ORDER BY WEEK_START) AS RNUM
+                                           , SUM( CASE WHEN TO_CHAR(WEEK_START, 'YYYYMMDD') BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','')
+                                                        AND TO_CHAR(WEEK_END, 'YYYYMMDD') BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','') THEN 1 ELSE 0 END) OVER() AS WEEK_CNT
+                                        FROM (
+                                               SELECT START_DT AS WEEK_START
+                                                    , END_DT AS WEEK_END
+                                                 FROM ( SELECT F_TIM_GET_WEEK_START('HX',REPLACE('20250713','-','')) AS START_DT
+                                                             , TO_DATE(TRIM(REPLACE('20250719','-','')), 'YYYYMMDD') END_DT
+                                                          FROM DUAL  
+                                                       )
+                                               CONNECT BY LEVEL < END_DT - START_DT
+                                              )
+                                       WHERE 1=1
+                                       GROUP BY WEEK_START, WEEK_END
+
+                                   ) D          
+							WHERE A.ENTER_CD  = TRIM('HX')
+							  AND A.SABUN 	  = TRIM( '20120026' )
+							  AND A.YMD BETWEEN D.WEEK_START AND D.WEEK_END
+							  --AND A.YMD BETWEEN REPLACE(:searchSymd,'-','') AND REPLACE(:searchEymd,'-','')
+							  AND A.ENTER_CD    = B.ENTER_CD(+)
+							  AND A.SABUN       = B.SABUN(+) 
+							  AND A.YMD         = B.YMD(+)
+
+				)
+				SELECT GUBUN, SDATE, EDATE
+                     , F_TIM_FMT_TIME(TRUNC(WORK_HOUR), TRUNC(( WORK_HOUR - TRUNC(WORK_HOUR)) * 60)) AS  WORK_HOUR
+                     , F_TIM_FMT_TIME(TRUNC(OT_HOUR), TRUNC(( OT_HOUR - TRUNC(OT_HOUR)) * 60)) AS  OT_HOUR
+   					 , '#fdf0f5' AS WORK_HOUR_BACK_COLOR
+   					 , '#fdf0f5' AS OT_HOUR_BACK_COLOR
+				FROM (						
+						SELECT GUBUN, SDATE, EDATE
+						     , CASE WHEN INSTR(GUBUN, '일 평균') > 0 THEN NVL( (WORK_HH_A + (WORK_MM_A/60)) / DECODE(WORK_CNT, 0, NULL, WORK_CNT), 0 )
+                                    WHEN INSTR(GUBUN, '주 평균') > 0 THEN NVL( (WORK_HH_A + (WORK_MM_A/60)) / DECODE(WEEK_CNT, 0, NULL, WEEK_CNT), 0 )
+                                    ELSE (WORK_HH_A + (WORK_MM_A/60)) END AS WORK_HOUR
+
+						     , CASE WHEN INSTR(GUBUN, '일 평균') > 0  THEN NVL( (WORK_HH_B + (WORK_MM_B/60)) / DECODE(WORK_ALL_CNT, 0, NULL, WORK_ALL_CNT), 0 )
+                                    WHEN INSTR(GUBUN, '주 평균') > 0  THEN NVL( (WORK_HH_B + (WORK_MM_B/60)) / DECODE(WEEK_CNT, 0, NULL, WEEK_CNT), 0 )
+                                    ELSE (WORK_HH_B + (WORK_MM_B/60)) END AS OT_HOUR
+
+						  FROM (
+								    SELECT ROW_NUMBER() OVER(ORDER BY MIN(YMD)) || '주차' AS GUBUN
+								         , MIN(WEEK_START) AS SDATE
+								         , MAX(WEEK_END) AS EDATE
+								         , SUM(WORK_HH_A) AS WORK_HH_A
+								         , SUM(WORK_HH_B) AS WORK_HH_B
+								         , SUM(WORK_MM_A) AS WORK_MM_A
+								         , SUM(WORK_MM_B) AS WORK_MM_B
+                                         , SUM( DECODE(PLAN_WORK_YN, 'N', 1, 0) ) AS WORK_CNT
+                                         , SUM( 1 ) AS WORK_ALL_CNT
+                                         , MAX(WEEK_CNT) AS WEEK_CNT
+								      FROM TMP
+								     GROUP BY RNUM
+								     UNION ALL
+								    SELECT '단위기간' AS GUBUN
+								         , MIN(WEEK_START) AS SDATE
+								         , MAX(WEEK_END) AS EDATE
+								         , SUM(WORK_HH_A) AS WORK_HH_A
+								         , SUM(WORK_HH_B) AS WORK_HH_B
+								         , SUM(WORK_MM_A) AS WORK_MM_A
+								         , SUM(WORK_MM_B) AS WORK_MM_B
+                                         , SUM( DECODE(PLAN_WORK_YN, 'N', 1, 0) ) AS WORK_CNT
+                                         , SUM( 1 ) AS WORK_ALL_CNT
+                                         , MAX(WEEK_CNT) AS WEEK_CNT
+								     FROM TMP
+							        WHERE YMD BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','')
+                                    UNION ALL 
+								    SELECT '일 평균' AS GUBUN
+								         , MIN(WEEK_START) AS SDATE
+								         , MAX(WEEK_END) AS EDATE
+								         , SUM(WORK_HH_A) AS WORK_HH_A
+								         , SUM(WORK_HH_B) AS WORK_HH_B
+								         , SUM(WORK_MM_A) AS WORK_MM_A
+								         , SUM(WORK_MM_B) AS WORK_MM_B
+                                         , SUM( DECODE(PLAN_WORK_YN, 'N', 1, 0) ) AS WORK_CNT
+                                         , SUM( 1 ) AS WORK_ALL_CNT
+                                         , MAX(WEEK_CNT) AS WEEK_CNT
+								     FROM TMP
+							        WHERE YMD BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','')
+
+                                    UNION ALL 
+								    SELECT '주 평균' AS GUBUN
+								         , MIN(WEEK_START) AS SDATE
+								         , MAX(WEEK_END) AS EDATE
+								         , SUM(WORK_HH_A) AS WORK_HH_A
+								         , SUM(WORK_HH_B) AS WORK_HH_B
+								         , SUM(WORK_MM_A) AS WORK_MM_A
+								         , SUM(WORK_MM_B) AS WORK_MM_B
+                                         , SUM( DECODE(PLAN_WORK_YN, 'N', 1, 0) ) AS WORK_CNT
+                                         , SUM( 1 ) AS WORK_ALL_CNT
+                                         , MAX(WEEK_CNT) AS WEEK_CNT
+								     FROM TMP
+							        WHERE YMD BETWEEN REPLACE('20250713','-','') AND REPLACE('20250719','-','')
+							  )	     
+					  )
+;
+---------------------------------------------------------------------------------------------------------------------------
 (7/16 Wednesday)
 [1] 특수교육비, 복리후생 작업/마감 하였을 때, 처리완료건은 결재 상태변경 못하게 해야함
 [2] 생수 택배 신청 (정기 배송 해당 포인트만 신청 가능토록 막아주세요)

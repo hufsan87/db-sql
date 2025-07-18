@@ -1,0 +1,212 @@
+ 
+---------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                                    | Name                        | Rows  | Bytes | Cost (%CPU)|
+---------------------------------------------------------------------------------------------------------------------------------
+|   0 | INSERT STATEMENT                                             |                             |   163K|   131M|    16M  (1)|
+|   1 |  TEMP TABLE TRANSFORMATION                                   |                             |       |       |            |
+|   2 |   LOAD AS SELECT (CURSOR DURATION MEMORY)                    | SYS_TEMP_0FD9D6692_76DEE67B |       |       |            |
+|*  3 |    INDEX RANGE SCAN                                          | PK_SYS007_2                 |    10 |    90 |     1   (0)|
+|   4 |   LOAD AS SELECT (CURSOR DURATION MEMORY)                    | SYS_TEMP_0FD9D6693_76DEE67B |       |       |            |
+|*  5 |    TABLE ACCESS BY INDEX ROWID BATCHED                       | TSYS005                     |    37 |   703 |    29   (0)|
+|*  6 |     INDEX SKIP SCAN                                          | PK_SYS005                   |    38 |       |     7   (0)|
+|   7 |   LOAD AS SELECT (CURSOR DURATION MEMORY)                    | SYS_TEMP_0FD9D6694_76DEE67B |       |       |            |
+|*  8 |    HASH JOIN                                                 |                             |   291K|    28M|  1608   (1)|
+|   9 |     MERGE JOIN CARTESIAN                                     |                             |    50 |  2950 |    13   (8)|
+|  10 |      SORT UNIQUE                                             |                             |    37 |   259 |     2   (0)|
+|  11 |       VIEW                                                   |                             |    37 |   259 |     2   (0)|
+|  12 |        TABLE ACCESS FULL                                     | SYS_TEMP_0FD9D6693_76DEE67B |    37 |   333 |     2   (0)|
+|  13 |      BUFFER SORT                                             |                             |    10 |   520 |    13   (8)|
+|  14 |       VIEW                                                   |                             |    10 |   520 |     2   (0)|
+|  15 |        TABLE ACCESS FULL                                     | SYS_TEMP_0FD9D6692_76DEE67B |    10 |    90 |     2   (0)|
+|* 16 |     TABLE ACCESS FULL                                        | THRM151                     | 62038 |  2544K|  1593   (1)|
+|  17 |   LOAD TABLE CONVENTIONAL                                    | TMSYS_06                    |       |       |            |
+|  18 |    TABLE ACCESS BY INDEX ROWID                               | TTIM017                     |     1 |    11 |     1   (0)|
+|* 19 |     INDEX UNIQUE SCAN                                        | SYS_C0027714                |     1 |       |     0   (0)|
+|* 20 |    HASH JOIN RIGHT ANTI                                      |                             |   163K|   131M|    16M  (1)|
+|  21 |     VIEW                                                     | VW_SQ_4                     |     1 |    15 |    40   (0)|
+|* 22 |      TABLE ACCESS FULL                                       | TTIM309                     |     1 |    28 |    36   (0)|
+|  23 |       VIEW                                                   |                             |    10 |   520 |     2   (0)|
+|  24 |        TABLE ACCESS FULL                                     | SYS_TEMP_0FD9D6692_76DEE67B |    10 |    90 |     2   (0)|
+|* 25 |     VIEW                                                     |                             |    16M|    12G|    16M  (1)|
+|* 26 |      HASH JOIN                                               |                             |    16M|    82G|  3041   (3)|
+|  27 |       VIEW                                                   |                             |    37 | 28231 |     2   (0)|
+|  28 |        TABLE ACCESS FULL                                     | SYS_TEMP_0FD9D6693_76DEE67B |    37 |   333 |     2   (0)|
+|* 29 |       HASH JOIN RIGHT OUTER                                  |                             |  2212K|  9776M|  2987   (1)|
+|  30 |        TABLE ACCESS FULL                                     | TTIM014                     |   233 |  2330 |     4   (0)|
+|* 31 |        HASH JOIN OUTER                                       |                             |  2212K|  9755M|  2976   (1)|
+|* 32 |         HASH JOIN RIGHT SEMI                                 |                             |     8 | 20432 |  1883   (1)|
+|  33 |          VIEW                                                |                             |    37 |   259 |     2   (0)|
+|  34 |           TABLE ACCESS FULL                                  | SYS_TEMP_0FD9D6693_76DEE67B |    37 |   333 |     2   (0)|
+|* 35 |          HASH JOIN OUTER                                     |                             |     8 | 20376 |  1881   (1)|
+|  36 |           NESTED LOOPS OUTER                                 |                             |     8 | 20064 |  1876   (1)|
+|  37 |            NESTED LOOPS SEMI                                 |                             |     8 | 19824 |  1859   (1)|
+|* 38 |             HASH JOIN RIGHT OUTER                            |                             |   190 |   452K|  1669   (1)|
+|  39 |              VIEW                                            | V_TTIM821                   |     1 |  2069 |   158   (2)|
+|  40 |               NESTED LOOPS                                   |                             |     1 |    87 |   158   (2)|
+|  41 |                NESTED LOOPS                                  |                             |     1 |    87 |   158   (2)|
+|  42 |                 NESTED LOOPS                                 |                             |     1 |    61 |   157   (2)|
+|  43 |                  VIEW                                        | VW_SQ_1                     |     1 |    40 |   156   (2)|
+|  44 |                   SORT GROUP BY                              |                             |     1 |    61 |   156   (2)|
+|  45 |                    NESTED LOOPS                              |                             |     1 |    61 |   155   (1)|
+|  46 |                     MERGE JOIN                               |                             |     1 |    46 |   153   (1)|
+|  47 |                      SORT JOIN                               |                             | 52624 |  1079K|   148   (0)|
+|  48 |                       INDEX FULL SCAN                        | PK_SYS007_2                 | 52624 |  1079K|   148   (0)|
+|* 49 |                      FILTER                                  |                             |       |       |            |
+|* 50 |                       SORT JOIN                              |                             |    46 |  1150 |     5  (20)|
+|  51 |                        TABLE ACCESS FULL                     | TTIM821                     |    46 |  1150 |     4   (0)|
+|* 52 |                     INDEX RANGE SCAN                         | IX_THRI103_02               |     1 |    15 |     2   (0)|
+|  53 |                  TABLE ACCESS BY USER ROWID                  | TSYS007                     |     1 |    21 |     1   (0)|
+|* 54 |                 INDEX UNIQUE SCAN                            | TTIM821_PK                  |     1 |       |     0   (0)|
+|  55 |                TABLE ACCESS BY INDEX ROWID                   | TTIM821                     |     1 |    26 |     1   (0)|
+|* 56 |              HASH JOIN                                       |                             |   190 | 70490 |  1510   (1)|
+|* 57 |               HASH JOIN RIGHT OUTER                          |                             |  3413 |  1013K|   423   (2)|
+|  58 |                INDEX FAST FULL SCAN                          | IDX_TIM001                  |  1919 | 67165 |     5   (0)|
+|* 59 |                HASH JOIN RIGHT OUTER                         |                             |  3413 |   896K|   418   (2)|
+|  60 |                 VIEW                                         |                             |   356 |  7476 |     4  (25)|
+|  61 |                  SORT UNIQUE                                 |                             |   356 |  8188 |     4  (25)|
+|  62 |                   INDEX FAST FULL SCAN                       | TTIM001_EX_PK               |   356 |  8188 |     3   (0)|
+|* 63 |                 FILTER                                       |                             |       |       |            |
+|* 64 |                  HASH JOIN RIGHT OUTER                       |                             |  3413 |   826K|   414   (1)|
+|  65 |                   VIEW                                       |                             |    24 |  1368 |    64   (2)|
+|  66 |                    NESTED LOOPS                              |                             |    24 |  1752 |    64   (2)|
+|  67 |                     NESTED LOOPS                             |                             |    38 |  1752 |    64   (2)|
+|  68 |                      VIEW                                    | TTIM111_V                   |     1 |    36 |    41   (3)|
+|  69 |                       WINDOW BUFFER                          |                             |     1 |   142 |    41   (3)|
+|* 70 |                        FILTER                                |                             |       |       |            |
+|  71 |                         SORT GROUP BY                        |                             |     1 |   142 |    41   (3)|
+|* 72 |                          HASH JOIN                           |                             |     5 |   710 |    40   (0)|
+|* 73 |                           HASH JOIN                          |                             |   259 | 20461 |    34   (0)|
+|  74 |                            INDEX FAST FULL SCAN              | IDX_TTIM110_01              |   671 | 20130 |     3   (0)|
+|  75 |                            TABLE ACCESS FULL                 | TTIM111                     | 12313 |   589K|    31   (0)|
+|  76 |                           TABLE ACCESS FULL                  | TTIM110                     |   671 | 42273 |     6   (0)|
+|* 77 |                      INDEX RANGE SCAN                        | IDX_TTIM112_1               |    38 |       |     2   (0)|
+|  78 |                     TABLE ACCESS BY INDEX ROWID              | TTIM112                     |    24 |   888 |    23   (0)|
+|* 79 |                   HASH JOIN RIGHT OUTER                      |                             | 17063 |  3182K|   350   (1)|
+|  80 |                    TABLE ACCESS BY INDEX ROWID BATCHED       | TTIM051                     |    18 |   288 |     4   (0)|
+|* 81 |                     INDEX SKIP SCAN                          | IDX_TTIM051_1               |    18 |       |     3   (0)|
+|* 82 |                    HASH JOIN                                 |                             | 13232 |  2261K|   346   (1)|
+|  83 |                     INDEX FULL SCAN                          | SYS_C0027714                |    19 |   171 |     1   (0)|
+|* 84 |                     HASH JOIN RIGHT OUTER                    |                             |  3317 |   537K|   345   (1)|
+|  85 |                      TABLE ACCESS FULL                       | TTIM325                     |     3 |   102 |     3   (0)|
+|* 86 |                      HASH JOIN RIGHT OUTER                   |                             |  3317 |   427K|   342   (1)|
+|  87 |                       VIEW                                   |                             |     1 |    75 |   236   (1)|
+|* 88 |                        FILTER                                |                             |       |       |            |
+|  89 |                         SORT GROUP BY                        |                             |     1 |   197 |   236   (1)|
+|  90 |                          NESTED LOOPS OUTER                  |                             |     1 |   197 |   235   (1)|
+|  91 |                           NESTED LOOPS                       |                             |     1 |   145 |   233   (1)|
+|* 92 |                            HASH JOIN                         |                             |     1 |   112 |   186   (1)|
+|  93 |                             NESTED LOOPS                     |                             |     2 |   112 |   116   (0)|
+|  94 |                              TABLE ACCESS FULL               | TTIM130                     |    14 |   490 |     4   (0)|
+|* 95 |                              INDEX RANGE SCAN                | PK_SYS007_2                 |     1 |    21 |     8   (0)|
+|  96 |                             TABLE ACCESS FULL                | TTIM131                     | 18531 |  1013K|    69   (0)|
+|* 97 | ED                         TABLE ACCESS BY INDEX ROWID BATCH | TTIM131                     |     1 |    33 |    47   (0)|
+|* 98 |                             INDEX RANGE SCAN                 | TTIM131_PK                  |     1 |       |    46   (0)|
+|  99 |                           TABLE ACCESS BY INDEX ROWID        | TTIM132                     |     1 |    52 |     2   (0)|
+|*100 |                            INDEX UNIQUE SCAN                 | TTIM132_PK                  |     1 |       |     1   (0)|
+|*101 |                       HASH JOIN                              |                             |  3317 |   184K|   106   (1)|
+| 102 |                        MERGE JOIN OUTER                      |                             |    25 |   600 |     8  (13)|
+| 103 |                         TABLE ACCESS BY INDEX ROWID          | TTIM017                     |    19 |   247 |     5   (0)|
+| 104 |                          INDEX FULL SCAN                     | SYS_C0027714                |    19 |       |     1   (0)|
+|*105 |                         SORT JOIN                            |                             |    18 |   198 |     3  (34)|
+|*106 |                          INDEX FAST FULL SCAN                | IDX_TTIM051_1               |    18 |   198 |     2   (0)|
+| 107 |                        TABLE ACCESS BY INDEX ROWID BATCHED   | TTIM121                     |  2572 | 84876 |    98   (0)|
+|*108 |                         INDEX SKIP SCAN                      | TIM121_IDX2                 |  2572 |       |    22   (0)|
+| 109 |                          VIEW                                |                             |    10 |   520 |     2   (0)|
+| 110 |                           TABLE ACCESS FULL                  | SYS_TEMP_0FD9D6692_76DEE67B |    10 |    90 |     2   (0)|
+| 111 |               VIEW                                           |                             |   291K|    18M|  1086   (1)|
+| 112 |                TABLE ACCESS FULL                             | SYS_TEMP_0FD9D6694_76DEE67B |   291K|  7116K|  1086   (1)|
+|*113 |             TABLE ACCESS BY INDEX ROWID                      | THRM100                     |   904 | 34352 |     1   (0)|
+|*114 |              INDEX UNIQUE SCAN                               | PK_HRM100                   |     1 |       |     0   (0)|
+| 115 |            TABLE ACCESS BY INDEX ROWID BATCHED               | TTIM120                     |     1 |    30 |     3   (0)|
+|*116 |             INDEX RANGE SCAN                                 | IDX_TIM120                  |     1 |       |     2   (0)|
+| 117 |           VIEW                                               |                             |   490 | 19110 |     5   (0)|
+|*118 |            HASH JOIN OUTER                                   |                             |   490 | 14700 |     5   (0)|
+| 119 |             INDEX FULL SCAN                                  | SYS_C0027714                |    19 |   171 |     1   (0)|
+| 120 |             TABLE ACCESS FULL                                | TTIM051                     |   490 | 10290 |     4   (0)|
+| 121 |         VIEW                                                 |                             |   291K|   575M|  1086   (1)|
+| 122 |          VIEW                                                |                             |   291K|    18M|  1086   (1)|
+| 123 |           TABLE ACCESS FULL                                  | SYS_TEMP_0FD9D6694_76DEE67B |   291K|  7116K|  1086   (1)|
+---------------------------------------------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   3 - access("SUN_DATE"=TO_CHAR(SYSDATE@!,'YYYYMMDD'))
+   5 - filter("USE_YN"='Y')
+   6 - access("GRCODE_CD"='M00001')
+       filter("GRCODE_CD"='M00001')
+   8 - access("BE"."ENTER_CD"="A1"."ENTER_CD")
+       filter("A2"."YMD">="A1"."SDATE" AND "A2"."YMD"<="A1"."EDATE")
+  16 - filter("A1"."STATUS_CD"='AA' AND "A1"."WORK_TYPE"<>'JCG_JLJ_07')
+  19 - access("S"."ENTER_CD"=:B1 AND "S"."TIME_CD"=NVL(:B2,NVL(:B3,CASE  WHEN "F_TIM_TIME_CD_EX"(:B4,:B5,:B6,:B7)=1 THEN 
+              NVL(:B8,NVL(:B9,:B10)) ELSE NVL(:B11,:B12) END )))
+  20 - access("T"."ENTER_CD"="ITEM_8" AND "T"."SABUN"="ITEM_9")
+  22 - filter("E"."FIX_ST_TIME_YN"='Y' AND "E"."FIX_ED_TIME_YN"='Y' AND "E"."SDATE"<= (SELECT "YMD" FROM  (SELECT /*+ 
+              CACHE ("T1") */ "C0" "YMD" FROM "SYS"."SYS_TEMP_0FD9D6692_76DEE67B" "T1") "BASE_DATE") AND NVL("E"."EDATE",'29991231')>= 
+              (SELECT "YMD" FROM  (SELECT /*+ CACHE ("T1") */ "C0" "YMD" FROM "SYS"."SYS_TEMP_0FD9D6692_76DEE67B" "T1") "BASE_DATE"))
+  25 - filter("T"."WORK_SHM" IS NOT NULL AND "T"."WORK_SHM"<>'-')
+  26 - access("A"."ENTER_CD"="BE"."ENTER_CD")
+  29 - access("G"."GNT_CD"="R"."GNT_CD"(+) AND "A"."ENTER_CD"="R"."ENTER_CD"(+))
+  31 - access("A"."YMD"="G"."YMD"(+) AND "A"."SABUN"="G"."SABUN"(+) AND "A"."ENTER_CD"="G"."ENTER_CD"(+))
+  32 - access("BE"."ENTER_CD"="A"."ENTER_CD")
+  35 - access("D"."STIME_CD"(+)=CASE "S2"."STIME_CD" WHEN 'HBASE1' THEN "S2"."STIME_CD" ELSE 
+              NVL("EX"."STIME_CD",NVL(NVL("F"."STIME_CD","A"."STIME_CD"),"S2"."STIME_CD")) END  AND 
+              "D"."TIME_CD"(+)=NVL("EX"."TIME_CD",NVL("F"."TIME_CD",CASE  WHEN 
+              "F_TIM_TIME_CD_EX"("A"."ENTER_CD","A"."YMD","A"."SABUN","A"."BUSINESS_PLACE_CD")=1 THEN 
+              NVL("S"."HOL_TIME_CD",NVL("C"."TIME_CD","A"."TIME_CD")) ELSE NVL("C"."TIME_CD","A"."TIME_CD") END )) AND 
+              "A"."ENTER_CD"="D"."ENTER_CD"(+))
+  38 - access("A"."YMD"="E"."YMD"(+) AND "A"."SABUN"="E"."SABUN"(+) AND "A"."ENTER_CD"="E"."ENTER_CD"(+))
+  49 - filter("DAY"."SUN_DATE"<="S1"."CONFIRM_EDATE")
+  50 - access(INTERNAL_FUNCTION("DAY"."SUN_DATE")>=INTERNAL_FUNCTION("S1"."CONFIRM_SDATE"))
+       filter(INTERNAL_FUNCTION("DAY"."SUN_DATE")>=INTERNAL_FUNCTION("S1"."CONFIRM_SDATE"))
+  52 - access("S1"."ENTER_CD"="S2"."ENTER_CD" AND "S1"."APPL_SEQ"="S2"."APPL_SEQ" AND "S2"."APPL_STATUS_CD"='99')
+  54 - access("ITEM_1"="A"."ENTER_CD" AND "A"."APPL_SEQ"="MAX(S1.APPL_SEQ)" AND "ITEM_2"="A"."SABUN")
+  56 - access("A"."ENTER_CD"="A"."ENTER_CD" AND "A"."YMD"="A"."YMD" AND "A"."SABUN"="A"."SABUN")
+  57 - access("A"."ENTER_CD"="A"."ENTER_CD"(+) AND "A"."YMD"=CASE  WHEN (ROWID(+) IS NOT NULL) THEN 
+              NVL("A"."RP_YY"(+),"A"."YY"(+))||NVL("A"."RP_MM"(+),"A"."MM"(+))||NVL("A"."RP_DD"(+),"A"."DD"(+)) ELSE NULL END  AND 
+              "A"."BUSINESS_PLACE_CD"="A"."BUSINESS_PLACE_CD"(+))
+  59 - access("A"."ENTER_CD"="HOL_EX"."ENTER_CD"(+) AND "A"."YMD"="HOL_EX"."YMD"(+) AND "A"."SABUN"="HOL_EX"."SABUN"(+))
+  63 - filter("S"."TIME_CD"=NVL("F"."TIME_CD",CASE  WHEN "F_TIM_TIME_CD_EX"("A"."ENTER_CD","A"."YMD","A"."SABUN","A"."BUS
+              INESS_PLACE_CD")=1 THEN NVL("S"."HOL_TIME_CD",NVL("C"."TIME_CD","A"."TIME_CD")) ELSE NVL("C"."TIME_CD","A"."TIME_CD") 
+              END ))
+  64 - access("A"."ENTER_CD"="F"."ENTER_CD"(+) AND "A"."SABUN"="F"."SABUN"(+) AND "A"."YMD"="F"."YMD"(+))
+       filter("A"."YMD"<=NVL("F"."EDATE"(+),'99991231') AND "A"."YMD">="F"."SDATE"(+))
+  70 - filter("B"."SDATE"=MAX("S"."SDATE"))
+  72 - access("A"."ENTER_CD"="B"."ENTER_CD" AND "A"."ORG_CD"="B"."ORG_CD" AND "A"."WORK_ORG_CD"="B"."WORK_ORG_CD")
+       filter("A"."SDATE">="B"."SDATE" AND "A"."SDATE"<=NVL("B"."EDATE",'99991231'))
+  73 - access("S"."ENTER_CD"="A"."ENTER_CD" AND "S"."ORG_CD"="A"."ORG_CD" AND "S"."WORK_ORG_CD"="A"."WORK_ORG_CD")
+       filter("A"."SDATE">="S"."SDATE" AND "A"."SDATE"<=NVL("S"."EDATE",'99991231'))
+  77 - access("S1"."ENTER_CD"="S2"."ENTER_CD" AND "S1"."ORG_CD"="S2"."ORG_CD" AND "S1"."WORK_ORG_CD"="S2"."WORK_ORG_CD")
+       filter("S1"."STIME_CD" IS NOT NULL)
+  79 - access("S"."ENTER_CD"="S2"."ENTER_CD"(+) AND "S"."TIME_CD"="S2"."TIME_CD"(+))
+  81 - access("S2"."DEFAULT_YN"(+)='Y')
+       filter("S2"."DEFAULT_YN"(+)='Y')
+  82 - access("A"."ENTER_CD"="S"."ENTER_CD")
+  84 - access("A"."ENTER_CD"="C"."ENTER_CD"(+) AND "A"."SABUN"="C"."SABUN"(+))
+       filter("A"."YMD">="C"."SDATE"(+) AND "A"."YMD"<=NVL("C"."EDATE"(+),'99991231'))
+  86 - access("A"."ENTER_CD"="E"."ENTER_CD"(+) AND "A"."SABUN"="E"."SABUN"(+) AND "A"."YMD"="E"."YMD"(+))
+  88 - filter("S1"."APPL_SEQ"=MAX("S"."APPL_SEQ"))
+  92 - access("S1"."ENTER_CD"="S3"."ENTER_CD" AND "S1"."FLEXIBLE_TYPE"="S3"."FLEXIBLE_TYPE")
+       filter("S4"."SUN_DATE">="S1"."SDATE" AND "S4"."SUN_DATE"<="S1"."EDATE")
+  95 - access("S4"."SUN_DATE">="S3"."SDATE" AND "S4"."SUN_DATE"<=NVL("S3"."EDATE",'99991231'))
+  97 - filter("S"."APPL_STATUS_CD"='99')
+  98 - access("S"."ENTER_CD"="S1"."ENTER_CD" AND "S"."SABUN"="S1"."SABUN" AND "S"."SDATE"="S1"."SDATE")
+       filter("S"."SDATE"="S1"."SDATE" AND "S"."SABUN"="S1"."SABUN")
+ 100 - access("S1"."ENTER_CD"="S2"."ENTER_CD"(+) AND "S1"."APPL_SEQ"="S2"."APPL_SEQ"(+) AND "S1"."SABUN"="S2"."SABUN"(+) 
+              AND "S4"."SUN_DATE"="S2"."YMD"(+))
+ 101 - access("A"."ENTER_CD"="S"."ENTER_CD" AND "A"."TIME_CD"="S"."TIME_CD")
+ 105 - access("S"."ENTER_CD"="S2"."ENTER_CD"(+) AND "S"."TIME_CD"="S2"."TIME_CD"(+))
+       filter("S"."TIME_CD"="S2"."TIME_CD"(+) AND "S"."ENTER_CD"="S2"."ENTER_CD"(+))
+ 106 - filter("S2"."DEFAULT_YN"(+)='Y')
+ 108 - access("A"."YMD"= (SELECT "YMD" FROM  (SELECT /*+ CACHE ("T1") */ "C0" "YMD" FROM 
+              "SYS"."SYS_TEMP_0FD9D6692_76DEE67B" "T1") "BASE_DATE"))
+       filter("A"."YMD"= (SELECT "YMD" FROM  (SELECT /*+ CACHE ("T1") */ "C0" "YMD" FROM 
+              "SYS"."SYS_TEMP_0FD9D6692_76DEE67B" "T1") "BASE_DATE"))
+ 113 - filter("A"."YMD"<=NVL("RET_YMD",'99991231') AND "A"."YMD">=NVL("S"."GEMP_YMD","S"."EMP_YMD"))
+ 114 - access("S"."ENTER_CD"="A"."ENTER_CD" AND "S"."SABUN"="A"."SABUN")
+ 116 - access("A"."ENTER_CD"="EX"."ENTER_CD"(+) AND "A"."SABUN"="EX"."SABUN"(+) AND "A"."YMD"="EX"."YMD"(+))
+ 118 - access("S1"."TIME_CD"="S2"."TIME_CD"(+) AND "S1"."ENTER_CD"="S2"."ENTER_CD"(+))
+ 
+Note
+-----
+   - 'PLAN_TABLE' is old version
