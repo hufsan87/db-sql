@@ -108,6 +108,7 @@ BEGIN
 		        CASE
 			        WHEN E.ENTER_CD IS NOT NULL 
 			        THEN TO_CHAR(TO_DATE(D.WORK_SHM2, 'HH24MI') + NVL(E.DECRE_SM, 0) / 1440, 'HH24MI')
+                    --기존 근무시간코드설정(TTIM017)테이블의 근무시작시간을 근무시간시간기준(TTIM051) 테이블에서 먼저 조회할 수 있도록 변경 2025.07.22 by ISU
 			        --ELSE NVL(A.SHM, D.WORK_SHM2)
                     ELSE NVL(D.WORK_SHM2, A.SHM)
 			        END AS WORK_SHM
