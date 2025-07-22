@@ -144,7 +144,7 @@ BEGIN
     /* 20240308 한진정보통신
      * 퇴직자에 대한 생수정기택배신청 종료 처리 
     */
-    IF p_enter_cd = 'HX' THEN
+    IF p_enter_cd in ('HX','HT','TP') THEN --한진관광, 토파스 추가 2025.07.22
         BEGIN
             UPDATE TBEN594 A
                SET A.USE_EDATE  = TO_CHAR(ADD_MONTHS(TO_DATE(p_search_ym, 'YYYYMM'), -1), 'YYYYMM')
