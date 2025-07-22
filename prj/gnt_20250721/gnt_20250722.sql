@@ -1,4 +1,4 @@
---부서/조직정보
+
 
 WITH TMP AS (
                                SELECT A.ENTER_CD
@@ -14,31 +14,7 @@ WITH TMP AS (
                                     , NVL(F_COM_GET_PRIOR_ORG_TYPE_CD(B.ENTER_CD, NVL(C.ORG_CD,B.ORG_CD), 'B0400', TO_CHAR(LAST_DAY(TO_DATE(REPLACE(TRIM('2025-07'), '-', ''),'YYYYMM')),'YYYYMMDD') )
                                         ,  B.ORG_CD )  AS P_ORG_CD
 , '01' as "01"
-, '02' as "02"
-, '03' as "03"
-, '04' as "04"
-, '05' as "05"
-, '06' as "06"
-, '07' as "07"
-, '08' as "08"
-, '09' as "09"
-, '10' as "10"
-, '11' as "11"
-, '12' as "12"
-, '13' as "13"
-, '14' as "14"
-, '15' as "15"
-, '16' as "16"
-, '17' as "17"
-, '18' as "18"
-, '19' as "19"
-, '20' as "20"
-, '21' as "21"
-, '22' as "22"
-, '23' as "23"
-, '24' as "24"
-                                    
-                                  FROM THRM100 A, THRM151 B, TTIM111_V C
+                                 FROM THRM100 A, THRM151 B, TTIM111_V C
                                  WHERE A.ENTER_CD = TRIM('HX')
                                    AND A.ENTER_CD = B.ENTER_CD
                                    AND A.SABUN    = B.SABUN
