@@ -14,3 +14,24 @@ WHERE
     AND stat.STATISTIC_NAME IN ('logical reads', 'physical reads', 'db block gets', 'consistent gets', 'segment scans')
 ORDER BY
     stat.STATISTIC_NAME;
+
+--INDEX 확인
+SELECT
+    idx.INDEX_NAME,
+    idx.INDEX_TYPE,
+    idx.TABLE_NAME,
+    col.COLUMN_NAME,
+    col.COLUMN_POSITION,
+    idx.UNIQUENESS
+FROM
+    ALL_INDEXES idx
+JOIN
+    ALL_IND_COLUMNS col ON idx.OWNER = col.INDEX_OWNER
+                        AND idx.INDEX_NAME = col.INDEX_NAME
+                        AND idx.TABLE_NAME = col.TABLE_NAME
+WHERE
+    idx.TABLE_NAME = 'TTIM131'
+    -- AND idx.OWNER = 'YOUR_SCHEMA_NAME' -- 특정 스키마에 한정하려면 주석 해제
+ORDER BY
+    idx.INDEX_NAME,
+    col.COLUMN_POSITION;
