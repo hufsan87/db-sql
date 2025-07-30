@@ -36,7 +36,7 @@ create or replace PACKAGE PKG_REPORT_VIEWS AS
     FUNCTION GET_EMP_REPORT_DATA (
         P_ENTER_CD IN VARCHAR2,
         P_BASE_MONTH_YYYYMM IN VARCHAR2, -- 예: '202507'
-        P_BASE_DATE_YYYYMMDD IN VARCHAR2, -- 예: '20250729'
+        P_BASE_YMD IN VARCHAR2, -- 예: '20250729'
         P_ORG_CD IN VARCHAR2, -- 예: 'HX_SELSPBM'
         P_SEARCH_SABUN IN VARCHAR2
     ) RETURN TY_REPORT_VIEW_TABLE PIPELINED;
@@ -49,14 +49,13 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
     FUNCTION GET_EMP_REPORT_DATA (
         P_ENTER_CD IN VARCHAR2,
         P_BASE_MONTH_YYYYMM IN VARCHAR2, -- 예: '202507'
-        P_BASE_DATE_YYYYMMDD IN VARCHAR2, -- 예: '20250729'
+        P_BASE_YMD IN VARCHAR2, -- 예: '20250729'
         P_ORG_CD IN VARCHAR2, -- 예: 'HX_SELSPBM'
         P_SEARCH_SABUN IN VARCHAR2
     ) RETURN TY_REPORT_VIEW_TABLE PIPELINED
     AS
         V_REC TY_REPORT_VIEW_REC;
-        -- 변환된 날짜 문자열 미리 계산
-        V_BASE_MONTH_TO_DATE_STR VARCHAR2(8) := TO_CHAR(LAST_DAY(TO_DATE(REPLACE(TRIM(P_BASE_MONTH_YYYYMM), '-', ''), 'YYYYMM')), 'YYYYMMDD');
+
     BEGIN
         FOR REC IN (
             WITH TMP AS (
@@ -67,10 +66,10 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
                      , NVL(C.ORG_CD, B.ORG_CD) AS ORG_CD
                      , C.WORK_ORG_CD
                      , F_COM_GET_GRCODE_NAME(B.ENTER_CD, 'H20010', B.JIKGUB_CD) AS JIKGUB_NM
-                     , F_COM_GET_ORG_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), V_BASE_MONTH_TO_DATE_STR) AS ORG_NM
-                     , NVL(F_COM_GET_PRIOR_ORG_TYPE_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), 'B0400', V_BASE_MONTH_TO_DATE_STR)
-                           , F_COM_GET_ORG_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), V_BASE_MONTH_TO_DATE_STR)) AS P_ORG_NM
-                     , NVL(F_COM_GET_PRIOR_ORG_TYPE_CD(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), 'B0400', V_BASE_MONTH_TO_DATE_STR)
+                     , F_COM_GET_ORG_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), P_BASE_YMD) AS ORG_NM
+                     , NVL(F_COM_GET_PRIOR_ORG_TYPE_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), 'B0400', P_BASE_YMD)
+                           , F_COM_GET_ORG_NM(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), P_BASE_YMD)) AS P_ORG_NM
+                     , NVL(F_COM_GET_PRIOR_ORG_TYPE_CD(B.ENTER_CD, NVL(C.ORG_CD, B.ORG_CD), 'B0400', P_BASE_YMD)
                            , B.ORG_CD) AS P_ORG_CD
                      , '01' AS "01"
                   FROM THRM100 A, THRM151 B, TTIM111_V C
@@ -78,13 +77,13 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
                    AND A.ENTER_CD = B.ENTER_CD
                    AND A.SABUN    = B.SABUN
                    AND A.SABUN IN (SELECT DISTINCT SABUN FROM THRM151_AUTH(P_ENTER_CD, 'A', P_SEARCH_SABUN, '10')) --SEARCH_TYPE 조회구분(자신만조회:P, 권한범위적용:O, 전사:A), AUTH_GRP 권한그룹 10 관리자
-                   AND P_BASE_DATE_YYYYMMDD BETWEEN B.SDATE AND NVL(B.EDATE, '99991231')
+                   AND P_BASE_YMD BETWEEN B.SDATE AND NVL(B.EDATE, '99991231')
                    AND A.ENTER_CD = C.ENTER_CD(+)
                    AND A.SABUN    = C.SABUN(+)
-                   AND REPLACE(TRIM(P_BASE_MONTH_YYYYMM), '-', '')||'01' BETWEEN C.SDATE(+) AND NVL(C.EDATE(+), '99991231')
+                   AND P_BASE_YMD BETWEEN C.SDATE(+) AND NVL(C.EDATE(+), '99991231')
                    AND B.STATUS_CD NOT LIKE 'RA%' -- 퇴직자 제외(RAA?)
-                   AND (A.RET_YMD IS NULL OR A.RET_YMD = P_BASE_DATE_YYYYMMDD) --당일 퇴직자만 표출
-                   AND B.ORG_CD = TRIM(P_ORG_CD) --조직, 없으면 전체
+                   AND (A.RET_YMD IS NULL OR A.RET_YMD = P_BASE_YMD) --당일 퇴직자만 표출
+                   AND B.ORG_CD = NVL(P_ORG_CD, B.ORG_CD) --조직, 없으면 전체
             )
             SELECT 0 AS DETAIL
                  , A.SEQ
@@ -100,21 +99,21 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
                  , A.P_ORG_NM
                  , A.P_ORG_CD
                  , '01' AS "HOUR_0_0" -- 컬럼명으로 적합하도록 변경
-                 , F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_DATE_YYYYMMDD) HOL_YN
-                 , F_TIM_GET_DAY_GNT_CD(A.ENTER_CD, A.SABUN, P_BASE_DATE_YYYYMMDD) GNT_CD
-                 , F_TIM_GET_DAY_GNT_NM(A.ENTER_CD, A.SABUN, P_BASE_DATE_YYYYMMDD) GNT_NM
-                 , F_TIM_GET_DAY_WORK_CD(A.ENTER_CD, A.SABUN, P_BASE_DATE_YYYYMMDD) WORK_CD
-                 , F_TIM_AGILE_SCHEDULE_YN(A.ENTER_CD, A.SABUN, P_BASE_DATE_YYYYMMDD, P_BASE_DATE_YYYYMMDD) FLEX_YN
+                 , F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_YMD) HOL_YN
+                 , F_TIM_GET_DAY_GNT_CD(A.ENTER_CD, A.SABUN, P_BASE_YMD) GNT_CD
+                 , F_TIM_GET_DAY_GNT_NM(A.ENTER_CD, A.SABUN, P_BASE_YMD) GNT_NM
+                 , F_TIM_GET_DAY_WORK_CD(A.ENTER_CD, A.SABUN, P_BASE_YMD) WORK_CD
+                 , F_TIM_AGILE_SCHEDULE_YN(A.ENTER_CD, A.SABUN, P_BASE_YMD, P_BASE_YMD) FLEX_YN
                  , T9.SDATE
                  , T9.EDATE
                  , T9.YMD
                  , T9.SHM
                  , T9.EHM
-                 , NVL(T9.SHM, CASE WHEN F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_DATE_YYYYMMDD)='Y' THEN '' ELSE '0830' END) AS BASE_SHM
-                 , NVL(T9.EHM, CASE WHEN F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_DATE_YYYYMMDD)='Y' THEN '' ELSE '1730' END) AS BASE_EHM
+                 , NVL(T9.SHM, CASE WHEN F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_YMD)='Y' THEN '' ELSE '0830' END) AS BASE_SHM
+                 , NVL(T9.EHM, CASE WHEN F_COM_GET_HOL_YN(A.ENTER_CD, P_BASE_YMD)='Y' THEN '' ELSE '1730' END) AS BASE_EHM
               FROM (
                     SELECT Z.*
-                         , F_COM_JIKJE_SORT(Z.ENTER_CD, Z.SABUN, V_BASE_MONTH_TO_DATE_STR) AS SEQ
+                         , F_COM_JIKJE_SORT(Z.ENTER_CD, Z.SABUN, P_BASE_YMD) AS SEQ
                       FROM TMP Z
                    ) A
             LEFT OUTER JOIN (
@@ -137,7 +136,7 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
                 AND T3.rn = 1
                 WHERE T1.ENTER_CD = T3.ENTER_CD
                 AND T1.SABUN = T3.SABUN
-                AND T1.YMD = P_BASE_DATE_YYYYMMDD
+                AND T1.YMD = P_BASE_YMD
             ) T9
             ON A.ENTER_CD = T9.ENTER_CD
             AND A.SABUN = T9.SABUN
