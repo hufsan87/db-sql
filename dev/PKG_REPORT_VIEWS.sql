@@ -1,13 +1,14 @@
-SELECT * FROM TABLE(PKG_REPORT_VIEWS.GET_EMP_REPORT_DATA('HX','2025-07', '20250729', 'HX_SELSPBM','test128'));
+SELECT * FROM TABLE(PKG_REPORT_VIEWS.GET_EMP_REPORT_DATA('HX','2025-07', '20250730', 'HX_SELSPBM','test128'));
+SELECT * FROM TABLE(PKG_REPORT_VIEWS.GET_EMP_REPORT_DATA('HX','2025-07', '20250730', '','test128'));
 
 create or replace PACKAGE PKG_REPORT_VIEWS AS
     -- 뷰의 결과 타입을 정의합니다. (실제 컬럼과 일치하도록 정의해야 함)
     TYPE TY_REPORT_VIEW_REC IS RECORD (
         DETAIL          NUMBER,
-        SEQ             NUMBER,
-        STATUS_CD       VARCHAR2(10), -- 실제 데이터 타입에 맞게 조정
+        SEQ             VARCHAR2(100),
+        STATUS_CD       VARCHAR2(20), -- 실제 데이터 타입에 맞게 조정
         ENTER_CD        VARCHAR2(10),
-        SABUN           VARCHAR2(20),
+        SABUN           VARCHAR2(13),
         NAME            VARCHAR2(100), -- F_COM_GET_NAMES 반환값 크기
         EMP_YMD         VARCHAR2(8),
         ORG_CD          VARCHAR2(20),
@@ -37,13 +38,12 @@ create or replace PACKAGE PKG_REPORT_VIEWS AS
         P_ENTER_CD IN VARCHAR2,
         P_BASE_MONTH_YYYYMM IN VARCHAR2, -- 예: '202507'
         P_BASE_YMD IN VARCHAR2, -- 예: '20250729'
-        P_ORG_CD IN VARCHAR2, -- 예: 'HX_SELSPBM'
+        P_ORG_CD_2 IN VARCHAR2, -- 예: 'HX_SELSPBM'
         P_SEARCH_SABUN IN VARCHAR2
     ) RETURN TY_REPORT_VIEW_TABLE PIPELINED;
 
 END PKG_REPORT_VIEWS;
 /
-
 create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
 
     FUNCTION GET_EMP_REPORT_DATA (
