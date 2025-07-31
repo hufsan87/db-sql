@@ -36,7 +36,6 @@ create or replace PACKAGE PKG_REPORT_VIEWS AS
 
     FUNCTION GET_EMP_REPORT_DATA (
         P_ENTER_CD IN VARCHAR2,
-        P_BASE_MONTH_YYYYMM IN VARCHAR2, -- 예: '202507'
         P_BASE_YMD IN VARCHAR2, -- 예: '20250729'
         P_ORG_CD_2 IN VARCHAR2, -- 예: 'HX_SELSPBM'
         P_SEARCH_SABUN IN VARCHAR2
@@ -44,13 +43,13 @@ create or replace PACKAGE PKG_REPORT_VIEWS AS
 
 END PKG_REPORT_VIEWS;
 /
+
 create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
 
     FUNCTION GET_EMP_REPORT_DATA (
         P_ENTER_CD IN VARCHAR2,
-        P_BASE_MONTH_YYYYMM IN VARCHAR2, -- 예: '202507'
         P_BASE_YMD IN VARCHAR2, -- 예: '20250729'
-        P_ORG_CD IN VARCHAR2, -- 예: 'HX_SELSPBM'
+        P_ORG_CD_2 IN VARCHAR2, -- 예: 'HX_SELSPBM'
         P_SEARCH_SABUN IN VARCHAR2
     ) RETURN TY_REPORT_VIEW_TABLE PIPELINED
     AS
@@ -83,7 +82,7 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
                    AND P_BASE_YMD BETWEEN C.SDATE(+) AND NVL(C.EDATE(+), '99991231')
                    AND B.STATUS_CD NOT LIKE 'RA%' -- 퇴직자 제외(RAA?)
                    AND (A.RET_YMD IS NULL OR A.RET_YMD = P_BASE_YMD) --당일 퇴직자만 표출
-                   AND B.ORG_CD = NVL(P_ORG_CD, B.ORG_CD) --조직, 없으면 전체
+                   AND B.ORG_CD = NVL(P_ORG_CD_2, B.ORG_CD) --조직, 없으면 전체
             )
             SELECT 0 AS DETAIL
                  , A.SEQ
@@ -154,7 +153,7 @@ create or replace PACKAGE BODY PKG_REPORT_VIEWS AS
             V_REC.JIKGUB_NM      := REC.JIKGUB_NM;
             V_REC.ORG_NM         := REC.ORG_NM;
             V_REC.P_ORG_NM       := REC.P_ORG_NM;
-            V_REC.P_ORG_CD       := REC.P_ORG_CD;
+            V_REC.P_ORG_CD   := REC.P_ORG_CD;
             V_REC.HOUR_0_0       := REC.HOUR_0_0;
             V_REC.HOL_YN         := REC.HOL_YN;
             V_REC.GNT_CD         := REC.GNT_CD;
