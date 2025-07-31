@@ -19,9 +19,9 @@ create or replace PACKAGE PKG_REPORT_VIEWS AS
         P_ORG_CD        VARCHAR2(20),
         HOUR_0_0        VARCHAR2(2), -- '01'
         HOL_YN          VARCHAR2(1),
-        GNT_CD          VARCHAR2(10),
+        GNT_CD          VARCHAR2(50),
         GNT_NM          VARCHAR2(100),
-        WORK_CD         VARCHAR2(10),
+        WORK_CD         VARCHAR2(50),
         FLEX_YN         VARCHAR2(1),
         SDATE           VARCHAR2(8), -- TTIM131.SDATE
         EDATE           VARCHAR2(8), -- TTIM131.EDATE
