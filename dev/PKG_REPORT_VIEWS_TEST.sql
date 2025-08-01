@@ -1,4 +1,6 @@
-            WITH TMP AS (
+--SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+--EXPLAIN PLAN  FOR
+WITH TMP AS (
                 SELECT A.ENTER_CD, B.STATUS_CD
                      , A.SABUN
                      , F_COM_GET_NAMES(A.ENTER_CD, A.SABUN) AS NAME
@@ -56,6 +58,7 @@
                  , T9.SDATE
                  , T9.EDATE
                  , T9.YMD
+                 , T10.IN_HM
                  , T9.SHM
                  , T9.EHM
                  , NVL(T9.SHM, CASE WHEN F_COM_GET_HOL_YN(A.ENTER_CD, '20250801')='Y' THEN '' ELSE '0830' END) AS BASE_SHM
@@ -92,4 +95,23 @@
             ) T9
             ON A.ENTER_CD = T9.ENTER_CD
             AND A.SABUN = T9.SABUN
+            LEFT OUTER JOIN (
+                SELECT MPT.ENTER_CD,MPT.SABUN,MAX(MPT.IN_HM) IN_HM
+                FROM (
+                SELECT MT.ENTER_CD,MT.SABUN,MT.YMD,MT.HM AS IN_HM
+                FROM TTIM720 MT
+                WHERE MT.ENTER_CD='HX' AND MT.YMD = '20250801' AND MT.HM IS NOT NULL
+                UNION ALL 
+                SELECT PT.ENTER_CD,PT.SABUN,PT.YMD,PT.IN_HM
+                FROM TTIM331 PT
+                WHERE PT.ENTER_CD='HX' AND PT.YMD = '20250801' AND PT.IN_HM IS NOT NULL
+                UNION ALL 
+                SELECT TT.ENTER_CD,TT.SABUN,TT.YMD,TT.IN_HM
+                FROM TTIM335 TT
+                WHERE TT.ENTER_CD='HX' AND TT.YMD = '20250801' AND TT.IN_HM IS NOT NULL
+                ) MPT
+                GROUP BY MPT.ENTER_CD, MPT.SABUN
+            ) T10
+            ON A.ENTER_CD = T10.ENTER_CD
+            AND A.SABUN = T10.SABUN
             ORDER BY A.SEQ;
