@@ -1,3 +1,6 @@
+--HX_SELSLU
+--HX_SELSLUE
+
 SELECT A.* FROM TABLE(PKG_REPORT_VIEWS.GET_EMP_REPORT_DATA('HX', '20251027', '','test128')) A
 ORDER BY A.FLEX_YN,A.GNT_NM;
 
@@ -37,7 +40,38 @@ WITH TMP AS (
                    AND '20250801' BETWEEN B.SDATE AND NVL(B.EDATE, '99991231')
                    AND B.STATUS_CD NOT LIKE 'RA%' -- 퇴직자 제외(RAA?)
                    AND (A.RET_YMD IS NULL OR A.RET_YMD = '20250801') --당일 퇴직자만 표출
-                   AND B.ORG_CD = NVL('', B.ORG_CD) --조직, 없으면 전체
+                   --AND B.ORG_CD = NVL('', B.ORG_CD) --조직, 없으면 전체
+                   AND (('HX_SELSLU' IS NULL OR 'HX_SELSLU' = '')
+                   OR
+                   (B.ORG_CD IN (
+                    -- WITH 절을 서브쿼리로 변경
+                    SELECT 'HX_SELSLU' AS ORG_CD FROM DUAL
+                    UNION
+                    SELECT
+                        TORG.ORG_CD
+                    FROM
+                        TORG105 TORG,
+                        (
+                            SELECT
+                                MAX(SDATE) AS max_sdate
+                            FROM
+                                TORG103
+                            WHERE
+                                ENTER_CD = 'HX'
+                                AND SDATE <= '20250801'
+                        ) max_sdate_cte
+                    WHERE
+                        TORG.ENTER_CD = 'HX'
+                        AND TORG.SDATE = max_sdate_cte.max_sdate
+                    START WITH
+                        TORG.PRIOR_ORG_CD = 'HX_SELSLU'
+                    CONNECT BY
+                        PRIOR TORG.ENTER_CD = TORG.ENTER_CD
+                        AND PRIOR TORG.SDATE = TORG.SDATE
+                        AND PRIOR TORG.ORG_CD = TORG.PRIOR_ORG_CD
+                   )
+                   )
+                   )
             )
             SELECT 0 AS DETAIL
                  , A.SEQ
@@ -75,7 +109,7 @@ WITH TMP AS (
                 SELECT T1.*, T3.ENTER_CD AS T3_ENTER_CD, T3.SABUN AS T3_SABUN, T3.APPL_SEQ AS T3_APPL_SEQ, T3.SDATE, T3.EDATE
                 FROM TTIM132 T1
                 JOIN (
-                    SELECT
+                    SELECT                 /*+ INDEX(IDX_TTIM131_WINDOW_OPT) */
                         T2.ENTER_CD,
                         T2.SABUN,
                         T2.APPL_SEQ,
