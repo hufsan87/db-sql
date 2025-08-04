@@ -111,7 +111,7 @@ WITH TMP AS (
                 SELECT T1.*, T3.ENTER_CD AS T3_ENTER_CD, T3.SABUN AS T3_SABUN, T3.APPL_SEQ AS T3_APPL_SEQ, T3.SDATE, T3.EDATE
                 FROM TTIM132 T1
                 JOIN (
-                    SELECT                 /*+ INDEX(IDX_TTIM131_WINDOW_OPT) */
+                    SELECT                
                         T2.ENTER_CD,
                         T2.SABUN,
                         T2.APPL_SEQ,
