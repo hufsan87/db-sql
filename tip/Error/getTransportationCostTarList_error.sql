@@ -78,4 +78,5 @@ SELECT
                 --AND NVL(D.REASON_GUBUN,' ') != 'T0100'
                 ) X
                 WHERE 1=1
-                ORDER BY WORK_YMD, ORG_NM, WORK_ORG_NM, SABUN ASC
+                ORDER BY WORK_YMD, ORG_NM, WORK_ORG_NM, SABUN ASC;
+                
