@@ -1,3 +1,51 @@
+[IBSheet] function doAction()
+[1]  case "Search":
+sheet1.DoSearch( "${ctx}/OrgMonthWorkSta.do?cmd=getOrgMonthWorkStaList", $("#sheet1Form").serialize());
+
+[2]  case "Search":
+   var sXml = sheet1.GetSearchData("${ctx}/SpeEduApr.do?cmd=getSpeEduAprList", $("#sheet1Form").serialize() );
+   sXml = replaceAll(sXml,"shtcolEdit", "Edit");
+   sheet1.LoadSearchData(sXml );
+
+  for(var i = 1; i <= sheet1.RowCount(); i++){
+   if(sheet1.GetCellValue(i, "closeSt") == "10005"){
+    sheet1.SetRowEditable(i,0);
+   }
+  }
+
+   for(let i = sheet1.HeaderRows(); i<sheet1.RowCount()+sheet1.HeaderRows(); i++){
+     if (sheet1.GetCellValue(i, "applTget")  == "01") {
+    	 sheet1.SetCellValue(i,"multYn","N");
+    	 sheet1.SetCellEditable(i,"multYn",0);
+     }
+	 }
+
+   let param = sheet1.GetRowData(i);
+   param.searchSabun = $("#searchApplSabun").val();
+
+    for (var i=1; i<=sheet1.LastRow(); i++){
+     if (i == 1){
+      sheet1.SetCellValue(0, "mon1", sheet1.GetCellValue(1,"titleMon1"));
+      sheet1.SetCellValue(0, "mon2", sheet1.GetCellValue(1,"titleMon2"));
+      sheet1.SetCellValue(0, "mon3", sheet1.GetCellValue(1,"titleMon3"));
+      sheet1.SetCellValue(0, "mon4", sheet1.GetCellValue(1,"titleMon4"));
+     }
+     orgCd    = sheet1.GetCellValue(i, "orgCd");
+     jikweeCd = sheet1.GetCellValue(i, "jikweeCd");
+
+     if (oldOrgCd != orgCd){
+      if (orgFirstRow > 0){
+       sheet1.SetMergeCell(orgFirstRow,    sheet1.SaveNameCol("orgNm"),    i-orgFirstRow,    1);
+       sheet1.SetMergeCell(jikweeFirstRow, sheet1.SaveNameCol("jikweeNm"), i-jikweeFirstRow, 1);
+
+
+[연차촉진]
+select * from TSYS920
+where n_title like '%노무%';
+
+[결재 로그 HISTORY]
+THRI103_HIST
+
 [쿼리로그]
 TSYS998
 
@@ -21,8 +69,8 @@ RestApi-maping-query.xml
 
 
 [tunning]
-EXPLAIN PLAN FOR select ...
 SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY);
+EXPLAIN PLAN FOR select ...
 
 [연차기산일]
 인사_인사기본_기준일
@@ -228,6 +276,13 @@ order by ymd desc;
 =ARRAYFORMULA(IF(ROW(A1:A10000), "국내", ""))
 
 ----------------------------------------------------------
+[s3]
+select * From file_mng where crdt>=systimestamp-50
+order by crdt desc;
+
+(bucket_name)
+dev : hr-attachment-s3/, prd : hanpaws-attachment-s3
+
 $aws s3 ls s3://hr-attachment-s3/company/
 $aws s3 ls s3://hanpaws-attachment-s3/company/
 
@@ -259,8 +314,8 @@ TSYS998
 INT_TSYS986
 
 [복리후생 작업 마감]
-TBEN777 (작업)
-TBEN991 (마감) CLOSE_ST
+TBEN777 (작업), TBEN997(INSERT하는데, 왜하는진 모르겠다??)
+TBEN991 (마감상태) CLOSE_ST
 	10001	작업전
 	10003	작업
 	10005	마감
