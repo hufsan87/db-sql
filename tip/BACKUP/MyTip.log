@@ -277,6 +277,10 @@ order by ymd desc;
 
 ----------------------------------------------------------
 [s3]
+>netstat -na|grep -i 18081
+>ps -ef|grep -i s3
+/home/appadmin/INTERFACE/S3_API/startup.sh
+
 select * From file_mng where crdt>=systimestamp-50
 order by crdt desc;
 
