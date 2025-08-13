@@ -92,7 +92,7 @@ BEGIN
                     CHKDATE = SYSDATE,
                     CHKID = P_CHKID
                 WHERE ENTER_CD = P_ENTER_CD AND APPL_SEQ = P_APPL_SEQ;
-            ELSE
+            ELSE -- HG,HX,TP,HT
                 UPDATE TBEN551
                 SET PAY_STS = 'P', -- 지급
                         PAY_AMT = lv_pay_amt,
