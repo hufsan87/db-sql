@@ -29,8 +29,8 @@ BEGIN
 
     --[신규][변경][중단](신청자료)
 		BEGIN
-		  -- 한진정보, 한진칼은 만나이 기준
-			IF P_ENTER_CD IN ('HX','HG') THEN
+		  -- 한진정보, 한진칼은 만나이 기준, (TP,HT 추가 2025.08.13)
+			IF P_ENTER_CD IN ('HX','HG','TP','HT') THEN
 		    SELECT A.ENTER_CD,	 A.APP_GB,		A.SABUN,		A.CHD_NAME,		A.CHD_BIRTH, 	B.PAY_AMT
 		      INTO lv_enter_cd	,lv_app_gb,		lv_sabun,		lv_chd_name,	lv_chd_birth, lv_pay_amt
 		      FROM TBEN551 A, TBEN550 B
@@ -66,26 +66,54 @@ BEGIN
     --[신규][변경]
     IF lv_app_gb != '3' THEN
  			BEGIN
-        UPDATE TBEN551
-        SET PAY_STS = 'P', -- 지급
-        		PAY_AMT = lv_pay_amt,
-            USE_S_YM =
-            /* 시작년월 : 신청일자 15일이전까지 당월부터 지급 */
-            			CASE WHEN  SUBSTR(REPLACE(P_APPL_YMD,'-',''), 7) <= 15
-            			THEN SUBSTR(REPLACE(P_APPL_YMD,'-',''), 1,6)
-            			ELSE TO_CHAR(ADD_MONTHS(TO_DATE(P_APPL_YMD, 'YYYYMMDD'), 1), 'YYYYMM')
-            			END, -- 신청월
-            --USE_E_YM = lv_last_e_ym, -- 신규:기준테이블, 변경:기 신청 종료년월
-            PART_SABUN = lv_part_sabun, -- 배우자 사번
-        	  PAY_ST_CNT = CASE WHEN lv_app_gb = '1' THEN months_between(to_date(
-        	              			CASE WHEN  SUBSTR(REPLACE(P_APPL_YMD,'-',''), 7) <= 15
-									            			THEN SUBSTR(REPLACE(P_APPL_YMD,'-',''), 1,6)
-									            			ELSE TO_CHAR(ADD_MONTHS(TO_DATE(P_APPL_YMD, 'YYYYMMDD'), 1), 'YYYYMM')
-									            			END -- 신청월
-        	  ,'yyyymm'),to_date(substr(chd_birth,1,6),'yyyymm')) ELSE 0 END,
-            CHKDATE = SYSDATE,
-            CHKID = P_CHKID
-        WHERE ENTER_CD = P_ENTER_CD AND APPL_SEQ = P_APPL_SEQ;
+            
+            IF P_ENTER_CD='KS' THEN
+                UPDATE TBEN551
+                SET PAY_STS = 'P', -- 지급
+                        PAY_AMT = lv_pay_amt,
+                    USE_S_YM =
+                    /* 시작년월 : 신청일자 15일이전까지 당월부터 지급 
+                    (2025.08.13 시작년월 처리관련 승인화면과 동일 로직 적용 요청
+                    <=20일 : 익월, >20일 : 익익월
+                    */
+                            CASE
+                                WHEN EXTRACT(DAY FROM TO_DATE(REPLACE(P_APPL_YMD,'-',''), 'YYYYMMDD')) <= 20
+                                THEN TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''), 'YYYYMMDD'), 1), 'YYYYMM')
+                                ELSE TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''), 'YYYYMMDD'), 2), 'YYYYMM')
+                            END, --신청월
+                    --USE_E_YM = lv_last_e_ym, -- 신규:기준테이블, 변경:기 신청 종료년월
+                    PART_SABUN = lv_part_sabun, -- 배우자 사번
+                      PAY_ST_CNT = CASE WHEN lv_app_gb = '1' THEN months_between(to_date(
+                                            CASE WHEN  SUBSTR(REPLACE(P_APPL_YMD,'-',''), 7) <= 15
+                                                                    THEN SUBSTR(REPLACE(P_APPL_YMD,'-',''), 1,6)
+                                                                    ELSE TO_CHAR(ADD_MONTHS(TO_DATE(P_APPL_YMD, 'YYYYMMDD'), 1), 'YYYYMM')
+                                                                    END -- 신청월
+                      ,'yyyymm'),to_date(substr(chd_birth,1,6),'yyyymm')) ELSE 0 END,
+                    CHKDATE = SYSDATE,
+                    CHKID = P_CHKID
+                WHERE ENTER_CD = P_ENTER_CD AND APPL_SEQ = P_APPL_SEQ;
+            ELSE
+                UPDATE TBEN551
+                SET PAY_STS = 'P', -- 지급
+                        PAY_AMT = lv_pay_amt,
+                    USE_S_YM =
+                    /* 시작년월 : 신청일자 15일이전까지 당월부터 지급 */
+                                CASE WHEN  SUBSTR(REPLACE(P_APPL_YMD,'-',''), 7) <= 15
+                                THEN SUBSTR(REPLACE(P_APPL_YMD,'-',''), 1,6)
+                                ELSE TO_CHAR(ADD_MONTHS(TO_DATE(P_APPL_YMD, 'YYYYMMDD'), 1), 'YYYYMM')
+                                END, -- 신청월
+                    --USE_E_YM = lv_last_e_ym, -- 신규:기준테이블, 변경:기 신청 종료년월
+                    PART_SABUN = lv_part_sabun, -- 배우자 사번
+                      PAY_ST_CNT = CASE WHEN lv_app_gb = '1' THEN months_between(to_date(
+                                            CASE WHEN  SUBSTR(REPLACE(P_APPL_YMD,'-',''), 7) <= 15
+                                                                    THEN SUBSTR(REPLACE(P_APPL_YMD,'-',''), 1,6)
+                                                                    ELSE TO_CHAR(ADD_MONTHS(TO_DATE(P_APPL_YMD, 'YYYYMMDD'), 1), 'YYYYMM')
+                                                                    END -- 신청월
+                      ,'yyyymm'),to_date(substr(chd_birth,1,6),'yyyymm')) ELSE 0 END,
+                    CHKDATE = SYSDATE,
+                    CHKID = P_CHKID
+                WHERE ENTER_CD = P_ENTER_CD AND APPL_SEQ = P_APPL_SEQ;
+            END IF;
 	    EXCEPTION
 	    WHEN OTHERS THEN
 	       P_SQLERRM := '자녀보육비 신규,변경 변경 시 에러발생 ' || SQLERRM;
