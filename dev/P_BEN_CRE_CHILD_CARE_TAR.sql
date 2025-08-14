@@ -62,7 +62,7 @@ IS
                         -- 변경 '25.05.29
 --                                        NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND 
 --                                        P_TAR_YM < NVL(A.USE_E_YM, A.USE_M_YM)
-                                          P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                                          P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM,'99991231')
                                           AND (A.USE_M_YM IS NULL 
                                                OR (
                                                  A.USE_M_YM>P_TAR_YM
@@ -402,7 +402,7 @@ BEGIN
                         --AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'99991231'))
                         --AND (A.PAY_STS = 'P' OR ( A.PAY_STS = 'S' AND ( NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,A.USE_M_YM))))
                         -- 추가 '25.05.29
-                        AND P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                        AND P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM,'99991231')
                         AND (A.USE_M_YM IS NULL 
                              OR (
                                A.USE_M_YM>P_TAR_YM
