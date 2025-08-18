@@ -124,8 +124,22 @@ BEGIN
     	BEGIN
         UPDATE TBEN551
         SET PAY_STS = 'F', -- 중단
-            USE_S_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
-            USE_E_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
+--            USE_S_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
+--            USE_E_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
+            USE_S_YM = CASE
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) <= 20
+                           THEN SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 1, 6) --신청월 해당월
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) > 20
+                           THEN SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD, '-', ''), 'YYYYMMDD'), 1), 'YYYYMMDD'), 1, 6) --신청월 익월
+                           ELSE SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6) --신청월 익월
+                       END,
+            USE_E_YM = CASE
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) <= 20
+                           THEN SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 1, 6) --신청월 해당월
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) > 20
+                           THEN SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD, '-', ''), 'YYYYMMDD'), 1), 'YYYYMMDD'), 1, 6) --신청월 익월
+                           ELSE SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6) --신청월 익월
+                       END,
             PART_SABUN = lv_part_sabun,
             CHKDATE = SYSDATE,
             CHKID = P_CHKID
@@ -139,25 +153,34 @@ BEGIN
 
     --[변경][중단] (기 신청자료)
     ln_last_appl_seq := F_BEN_CHD_GET_LAST_SEQ(lv_enter_cd, P_APPL_SEQ, lv_app_gb,lv_sabun,lv_chd_name,lv_chd_birth);
---P_COM_SET_LOG(P_ENTER_CD, 'BEN', 'P_BEN_CHD_DET_LAST_UPD','113-2','TEST START : '||lv_app_gb||','||ln_last_appl_seq, P_SABUN);
     IF ln_last_appl_seq > 0 THEN
         IF lv_app_gb='2' THEN
---P_COM_SET_LOG(P_ENTER_CD, 'BEN', 'P_BEN_CHD_DET_LAST_UPD','113-3','TEST START : '||lv_app_gb||','||ln_last_appl_seq, P_SABUN);
             UPDATE TBEN551
             SET
                 PAY_STS='F',
-                USE_E_YM = TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'), -1), 'YYYYMM'),
+                --USE_E_YM = TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'), -1), 'YYYYMM'),
+                USE_E_YM = CASE
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) <= 20
+                           THEN SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 1, 6) --신청월 해당월
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) > 20
+                           THEN SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD, '-', ''), 'YYYYMMDD'), 1), 'YYYYMMDD'), 1, 6) --신청월 익월
+                           ELSE SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),-1),'YYYYMMDD'), 1,6) --신청월 전월
+                       END,
                 CHKDATE = SYSDATE,
                 CHKID = P_CHKID
             WHERE
                 ENTER_CD = P_ENTER_CD
                 AND APPL_SEQ = ln_last_appl_seq;
         ELSIF lv_app_gb='3' THEN
---P_COM_SET_LOG(P_ENTER_CD, 'BEN', 'P_BEN_CHD_DET_LAST_UPD','113-4','TEST START : '||lv_app_gb||','||ln_last_appl_seq, P_SABUN);
             UPDATE TBEN551
             SET
                 PAY_STS='F',
-                USE_E_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
+                --USE_E_YM = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6), --신청월 익월
+            USE_E_YM = CASE
+                           WHEN P_ENTER_CD = 'KS' AND TO_NUMBER(SUBSTR(REPLACE(P_APPL_YMD, '-', ''), 7, 2)) <= 20
+                           THEN SUBSTR(REPLACE(P_APPL_YMD, '-', ''), -1, 6) --신청월 전월
+                           ELSE SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(REPLACE(P_APPL_YMD,'-',''),'YYYYMMDD'),1),'YYYYMMDD'), 1,6) --신청월 익월
+                       END,
                 CHKDATE = SYSDATE,
                 CHKID = P_CHKID
             WHERE
