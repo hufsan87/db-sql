@@ -197,3 +197,19 @@ WHERE ENTER_CD='KS' AND SCH_LOC_CD='0' AND USE_YN='Y'
 HAVING COUNT(*)>1
 GROUP BY SCH_NAME,SCH_DEPT
 ORDER BY COUNT(*) DESC;
+
+
+------------------------------------------------------------------
+--[sr1] 대학 콤포 변경=> 수업년한 표기
+-- 대학별 수업 년한 unique? 학과별?
+select distinct sch_cd, year_long
+from tben753
+where enter_cd='KS' and sch_loc_cd='0' and use_yn='Y';
+
+SELECT COUNT(*) FROM TBEN753
+WHERE ENTER_CD='KS' AND USE_YN='Y' AND SCH_LOC_CD='0';
+
+13288
+
+SELECT COUNT(DISTINCT SCH_CD||SCH_DEPT_CD) FROM TBEN753
+WHERE ENTER_CD='KS' AND USE_YN='Y' AND SCH_LOC_CD='0';
