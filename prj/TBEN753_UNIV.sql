@@ -1,4 +1,3 @@
---[2025.08.21]
 --[한국공항] 학자금 신청 기능 개발 요청
 --202501 > ... > 202301
 -- [1] SCH_LOC_CD='0', SCH_CD, SCH_DEPT_CD 기준가능 YEAR_LONG(9.9), DAY_NIGHT(D/N/S/R - 주간/야간/계절제/원격)
@@ -190,3 +189,11 @@ GROUP BY SCH_CD,SCH_DEPT_CD
 
 SELECT * FROM TBEN753 WHERE ENTER_CD='KS' AND SCH_LOC_CD = '0' AND (YEAR_LONG IS NULL OR YEAR_LONG=0);
 SELECT * FROM TBEN753 WHERE ENTER_CD='KS' AND SCH_LOC_CD = '0' AND DAY_NIGHT IS NULL;
+----------------------------------------------------------------------------------------------------------------------
+--[2]학과코드 최신화
+--다음 >1 인것들 먼저 CLEANSING 필요, 여기서 일단 중단.
+SELECT SCH_NAME,SCH_DEPT,COUNT(*) FROM TBEN753
+WHERE ENTER_CD='KS' AND SCH_LOC_CD='0' AND USE_YN='Y'
+HAVING COUNT(*)>1
+GROUP BY SCH_NAME,SCH_DEPT
+ORDER BY COUNT(*) DESC;
