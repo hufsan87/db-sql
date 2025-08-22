@@ -80,7 +80,17 @@
 --          AND A.SCH_DEPT_CD = B.SCH_DEPT_CD
 --    );
 
-
+-- UPDATE TBEN753 A
+-- SET
+--     A.SCH_CAMPUS = (SELECT B.SCH_CAMPUS FROM TBEN753_UNIV_202301 B WHERE A.SCH_CD = B.SCH_CD AND A.SCH_DEPT_CD = B.SCH_DEPT_CD)
+-- WHERE
+--     A.ENTER_CD = 'KS' AND A.SCH_LOC_CD = '0' AND A.SCH_CAMPUS IS NULL
+--     AND EXISTS (
+--         SELECT 1
+--         FROM TBEN753_UNIV_202301 B
+--         WHERE A.SCH_CD = B.SCH_CD
+--           AND A.SCH_DEPT_CD = B.SCH_DEPT_CD
+--     );
 -------------------------------------------------------------------------------------
 /*    
 TBEN753_UNIV_202501
