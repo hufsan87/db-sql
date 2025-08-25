@@ -9,8 +9,9 @@ create or replace FUNCTION "F_BEN_SCH_DET_CHECK2" (
     , P_SCH_YEAR          IN VARCHAR2
     , P_DIV_CD            IN VARCHAR2 -- 분기/학기
     , P_APPL_MON          IN NUMBER -- 신청금액
-    , P_ATD_AMT          IN NUMBER -- 등록금
+    , P_ATD_AMT           IN NUMBER -- 등록금
     , P_SCH_LOC_CD        IN VARCHAR2 -- 국내외구분
+    , P_REVERSE_YN        IN VARCHAR2 --역학기 신청 여부
   ) RETURN VARCHAR2
 IS
     lv_biz_cd              TSYS903.BIZ_CD%TYPE := 'BEN';
@@ -134,34 +135,36 @@ BEGIN
     ------------------------------------------------------------------------------------------------------------------------
     -- 0. 과거신청건 체크
     ------------------------------------------------------------------------------------------------------------------------
-	ln_cnt := 0;
-	BEGIN
-		SELECT COUNT(1) AS CNT
-		  INTO ln_cnt
-		  FROM TBEN751 A
-		 WHERE A.ENTER_CD   	 = P_ENTER_CD
-		   AND A.APPL_SEQ   	 <> P_APPL_SEQ
-		   AND A.SABUN   		 = P_SABUN
-           --AND A.SCH_TYPE_CD    = P_SCH_TYPE_CD
-            AND (
-                (P_SCH_TYPE_CD IN ('20','30') AND SCH_TYPE_CD IN ('20','30'))
-                OR ((P_SCH_TYPE_CD NOT IN ('20','30') AND SCH_TYPE_CD = P_SCH_TYPE_CD))
-            )
-		   -- AND A.SCH_SUP_TYPE_CD = P_SCH_SUP_TYPE_CD
-           AND REPLACE(A.FAM_NM,' ','') = REPLACE(P_FAM_NM,' ','')
-           AND A.SCH_YEAR||A.DIV_CD > P_SCH_YEAR||P_DIV_CD
-		   AND EXISTS ( SELECT 1 FROM THRI103 X
-						 WHERE X.ENTER_CD = A.ENTER_CD
-						   AND X.APPL_SEQ = A.APPL_SEQ
-						   AND X.APPL_STATUS_CD IN ('21','31','99') ); -- 신청중인 대상도 체크
-	EXCEPTION
-		WHEN OTHERS THEN
-			RETURN '과거 신청건 체크 시 오류가 발생했습니다.';
-	END;
-
-	IF ln_cnt > 0 THEN
-		RETURN '과거 신청 건은 신청할 수 없습니다.';
-	END IF;
+    IF P_REVERSE_YN IS NULL OR P_REVERSE_YN='' OR P_REVERSE_YN = 'N' THEN
+    	ln_cnt := 0;
+        BEGIN
+            SELECT COUNT(1) AS CNT
+              INTO ln_cnt
+              FROM TBEN751 A
+             WHERE A.ENTER_CD   	 = P_ENTER_CD
+               AND A.APPL_SEQ   	 <> P_APPL_SEQ
+               AND A.SABUN   		 = P_SABUN
+               --AND A.SCH_TYPE_CD    = P_SCH_TYPE_CD
+                AND (
+                    (P_SCH_TYPE_CD IN ('20','30') AND SCH_TYPE_CD IN ('20','30'))
+                    OR ((P_SCH_TYPE_CD NOT IN ('20','30') AND SCH_TYPE_CD = P_SCH_TYPE_CD))
+                )
+               -- AND A.SCH_SUP_TYPE_CD = P_SCH_SUP_TYPE_CD
+               AND REPLACE(A.FAM_NM,' ','') = REPLACE(P_FAM_NM,' ','')
+               AND A.SCH_YEAR||A.DIV_CD > P_SCH_YEAR||P_DIV_CD
+               AND EXISTS ( SELECT 1 FROM THRI103 X
+                             WHERE X.ENTER_CD = A.ENTER_CD
+                               AND X.APPL_SEQ = A.APPL_SEQ
+                               AND X.APPL_STATUS_CD IN ('21','31','99') ); -- 신청중인 대상도 체크
+        EXCEPTION
+            WHEN OTHERS THEN
+                RETURN '과거 신청건 체크 시 오류가 발생했습니다.';
+        END;
+    
+        IF ln_cnt > 0 THEN
+            RETURN '과거 신청 건은 신청할 수 없습니다.';
+        END IF;
+    END IF;
     
     ------------------------------
     -- 학자금신청 기준정보 가져오기
