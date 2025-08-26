@@ -12,6 +12,7 @@ create or replace FUNCTION "F_BEN_SCH_DET_CHECK2" (
     , P_ATD_AMT           IN NUMBER -- 등록금
     , P_SCH_LOC_CD        IN VARCHAR2 -- 국내외구분
     , P_REVERSE_YN        IN VARCHAR2 --역학기 신청 여부
+    , P_YEAR_LONG         IN VARCHAR2 -- 수업년한/허용학기 산정용
   ) RETURN VARCHAR2
 IS
     lv_biz_cd              TSYS903.BIZ_CD%TYPE := 'BEN';
@@ -32,6 +33,9 @@ IS
 	-- 재학생 : 674,550원, 신입생 : 695,700원요 (한도)
 	lv_sch_10_new NUMBER := 695700;
 	lv_sch_10_old NUMBER := 674550;
+    
+    --허용학기
+    ln_year_long NUMBER := P_YEAR_LONG / 0.5;
 BEGIN
     lv_result := 'OK';
 
@@ -240,9 +244,20 @@ BEGIN
 
         ln_cnt := ln_cnt + 1; -- 현재 신청건수 더함.
 
-        IF ln_cnt > NVL(lv_ben750.LMT_APP_CNT, 0) THEN
-            RETURN '지원가능횟수는 '|| lv_ben750.LMT_APP_CNT || '회이며 초과 신청 할 수 없습니다./n(기 지원횟수 : '|| (ln_cnt-1) ||'회)';
+--        IF ln_cnt > NVL(lv_ben750.LMT_APP_CNT, 0) THEN
+--            RETURN '지원가능횟수는 '|| lv_ben750.LMT_APP_CNT || '회이며 초과 신청 할 수 없습니다./n(기 지원횟수 : '|| (ln_cnt-1) ||'회)';
+--        END IF;
+        
+        IF P_SCH_TYPE_CD IN ('20','30') AND P_SCH_LOC_CD = '0' AND P_YEAR_LONG IS NOT NULL AND P_YEAR_LONG > 0 THEN
+            IF ln_cnt > NVL(ln_year_long,0) THEN
+                RETURN '신청 학교/학과의 지원가능횟수는 '|| ln_year_long || '회이며/n초과 신청 할 수 없습니다. (기 지원횟수 : '|| (ln_cnt-1) ||'회)';
+            END IF;
+        ELSE
+            IF ln_cnt > NVL(lv_ben750.LMT_APP_CNT, 0) THEN
+                RETURN '신청 학교/학과의 지원가능횟수는 '|| lv_ben750.LMT_APP_CNT || '회이며/n초과 신청 할 수 없습니다. (기 지원횟수 : '|| (ln_cnt-1) ||'회)';
+            END IF;
         END IF;
+        
     END IF;
 
    RETURN lv_result;
