@@ -7,7 +7,6 @@ CREATE OR REPLACE PROCEDURE P_BEN_MTH_SHFUND_BATCH IS
   -- PAY_ACTION_CD 를 조회할 변수
   v_pay_action_cd     TCPN201.PAY_ACTION_CD%TYPE;
 BEGIN
-  --test
   -- 1) PAY_ACTION_CD
   SELECT MIN(pay_action_cd)
     INTO v_pay_action_cd
