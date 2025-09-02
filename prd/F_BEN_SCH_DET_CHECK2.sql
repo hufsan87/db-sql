@@ -13,6 +13,7 @@ create or replace FUNCTION "F_BEN_SCH_DET_CHECK2" (
     , P_SCH_LOC_CD        IN VARCHAR2 -- 국내외구분
     , P_REVERSE_YN        IN VARCHAR2 --역학기 신청 여부
     , P_YEAR_LONG         IN VARCHAR2 -- 수업년한/허용학기 산정용
+    , P_CHECK_FIRST       IN VARCHAR2
   ) RETURN VARCHAR2
 IS
     lv_biz_cd              TSYS903.BIZ_CD%TYPE := 'BEN';
@@ -132,10 +133,8 @@ BEGIN
 			RETURN '기 신청건 체크 시 오류가 발생했습니다.';
 	END;
 
-	IF ln_cnt > 0 THEN
-        IF P_YEAR_LONG != '1' AND P_YEAR_LONG != '4' THEN
-            RETURN '동일한 신청 건이 있어 신청 할 수 없습니다.('||P_FAM_NM||', '||P_sch_year||'학년'||REPLACE(P_DIV_CD,'0','')||'학기)';
-        END IF;
+	IF P_CHECK_FIRST='N' AND ln_cnt > 0 THEN
+		RETURN '동일한 신청 건이 있어 신청 할 수 없습니다.('||P_FAM_NM||', '||P_sch_year||'학년'||REPLACE(P_DIV_CD,'0','')||'학기)';
 	END IF;
 
     ------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +166,7 @@ BEGIN
                 RETURN '과거 신청건 체크 시 오류가 발생했습니다.';
         END;
     
-        IF ln_cnt > 0 THEN
+        IF P_CHECK_FIRST='N' AND ln_cnt > 0 THEN
             RETURN '과거 신청 건은 신청할 수 없습니다.';
         END IF;
     END IF;
