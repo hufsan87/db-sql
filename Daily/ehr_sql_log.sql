@@ -10,3 +10,7 @@
 -----CREATE INDEX IX_TTIM111_01 ON TTIM111 (ENTER_CD, SABUN, SDATE, EDATE); => EDATE 없음
 
 select * from tab;
+
+--(9/2)
+--조한백 9306764 prd 횟수 이상
+--김상순 9302736 dev 횟수 정상
