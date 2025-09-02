@@ -133,7 +133,9 @@ BEGIN
 	END;
 
 	IF ln_cnt > 0 THEN
-		RETURN '동일한 신청 건이 있어 신청 할 수 없습니다.('||P_FAM_NM||', '||P_sch_year||'학년'||REPLACE(P_DIV_CD,'0','')||'학기)';
+        IF P_YEAR_LONG != '1' AND P_YEAR_LONG != '4' THEN
+            RETURN '동일한 신청 건이 있어 신청 할 수 없습니다.('||P_FAM_NM||', '||P_sch_year||'학년'||REPLACE(P_DIV_CD,'0','')||'학기)';
+        END IF;
 	END IF;
 
     ------------------------------------------------------------------------------------------------------------------------
