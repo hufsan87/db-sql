@@ -64,8 +64,8 @@ BEGIN
 
 		IF ln_cnt > 0 THEN
 			-- 한국공항 신규일 경우 이전 신청내역 상관없이 신청 가능하도록 (어린이집 기간만 체크)
-			IF P_ENTER_CD = 'KS' THEN
-                IF P_PAY_GB = '02' THEN -- 어린이집 기간 체크
+			IF P_ENTER_CD = 'KS' AND P_PAY_GB = '02' THEN
+                --IF P_PAY_GB = '02' THEN -- 어린이집 기간 체크
                     SELECT APP_GB INTO lv_app_gb
                     FROM TBEN551
                     WHERE 
@@ -84,7 +84,7 @@ BEGIN
                            RETURN '해당 어린이집 계약기간에 이미 신청완료 또는 신청중인 내역이 있습니다.';
                         END IF;
                     END IF;
-                END IF;
+                --END IF;
 			ELSE
 				RETURN '이미 신청완료 또는 신청중인 내역이 있습니다.';
 			END IF;
