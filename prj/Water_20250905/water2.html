@@ -1,0 +1,108 @@
+<div class="wrapper">
+	<form name="sheetForm" id="sheetForm" method="post">
+		<input type="hidden" id="tben593Data" name="tben593Data" />
+		<div class="sheet_search outer">
+			<table>
+				<tr>
+					<td>
+						<span>정산일</span>
+						<input type="text" id="searchCalcDAY" name="searchCalcDAY" class="date2" value="" />
+					</td>
+					<td>
+						<span>사번/성명</span>
+						<input type="text" id="searchSabunName" name="searchSabunName" class="text" style="ime-mode:active;" />
+					</td>
+					<td>
+						<span>취소내역만 조회</span>
+						<input class="searchChkBox" type="checkbox" id="searchIsCancYn" name="searchIsCancYn" value="Y">
+					</td>
+					<td>
+						<a href="javascript:doSearch()" class="button">조회</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</form>
+
+
+	<table border="1" class="" style="width: 100%; height: 200px; border-collapse: collapse; text-align: center;">
+		<colgroup>
+			<col width="29%" />
+			<col width="1%" />
+			<col width="70%" />
+		</colgroup>
+		<tr>
+			<td rowspan="2" style="border: 1px solid black; padding: 8px; vertical-align: top;" class="valignT">
+				<div class="">
+					<div class="">
+						<ul>
+							<li id="txt" class="">정산기준</li>
+						</ul>
+					</div>
+				</div>
+				<form name="searchForm" id="searchForm" method="post">
+					<table class="" style="border: 1px solid #e7edf0;">
+						<colgroup>
+							<col width="40%" />
+							<col width="60%" />
+						</colgroup>
+						<tr>
+							<th>정산지정일자</th>
+							<th>바코드</th>
+						</tr>
+						<tr>
+							<td style="border-right: 1px solid #e7edf0;"><input type="text" id="calcYmd" name="calcYmd"
+									class="date2 required" /></td>
+							<td><input type="text" id="barCd" name="barCd" class="w100p" /></td>
+						</tr>
+						<tr>
+							<th>바코드수기등록</th>
+							<td>
+								<input type="text" id="dirBarCd" name="dirBarCd" class="w70p" />
+								<a href="javascript:setBarData('&barCd=' + $('#dirBarCd').val());" class="button"> 조회</a>
+							</td>
+						</tr>
+						<tr>
+							<th>정산일자</th>
+							<td><span id="spCalcYmd"></span></td>
+						</tr>
+						<tr>
+							<th>바코드</th>
+							<td><span id="spBarCd"></span></td>
+						</tr>
+						<tr>
+							<th>신청자</th>
+							<td><span id="spAppNm"></span></td>
+						</tr>
+						<tr>
+							<th>발급일자</th>
+							<td><span id="spUseYmd"></span></td>
+						</tr>
+						<tr>
+							<th>종류/수량</th>
+							<td><span id="spUseLtCnt"></span></td>
+						</tr>
+						<tr>
+							<th>비고</th>
+							<td><textarea id="note1" name="note1" rows="5" class="w100p"></textarea></td>
+						</tr>
+					</table>
+					<a href="javascript:updateSettleData();" class="button w100p mat10 saveBarDataButton"
+						style="padding-left:2px; padding-right:2px">확인</a>
+				</form>
+			</td>
+			<td rowspan="2" style="border: 1px solid black; padding: 8px; vertical-align: middle;">test</td>
+			
+            <td rowspan="2" style="border: 1px solid black; padding: 0;">
+				<div style="display: flex; flex-direction: column; height: 100%;">
+					<div style="height: 70%; border-bottom: 1px solid black; padding: 8px;">
+						데이터 3asdfasdfasdf
+					</div>
+					<div style="height: 30%; padding: 8px;">
+						tafasdf dddddddd
+					</div>
+				</div>
+			</td>
+            </tr>
+		</table>
+</div>
