@@ -217,7 +217,7 @@ P_COM_SET_LOG(P_CHK_ENTER_CD, g_biz_cd, lv_object_nm||'TEST','100',C_P_DATA.RECE
                                     , SUBSTR(C_DATA.RECEIVE_DATE,0,6)                               AS BAS_YM           --포인트적용년월
                                     , DECODE(C_DATA.RECEIVE_TYPE ,'M','01','C','03', C_DATA.RECEIVE_TYPE)    AS USE_GB           --수령방법(01 직접수령, 02 택배)
                                     , C_DATA.RECEIVE_DATE||C_DATA.RECEIVE_TIME                      AS USE_SEQ          --일련번호
-                                    , DECODE(C_DATA.WATER_TYPE, '330ml','01', '500ml','02', '1.5L','03', '5G/L','04', C_DATA.WATER_TYPE)  AS USE_LT_CD        --사용포인트
+                                    , DECODE(C_DATA.WATER_TYPE, '330ml','01', '500ml','02', '1.5L','03', '5G/L','04','190ml','05', C_DATA.WATER_TYPE)  AS USE_LT_CD        --사용포인트, 190ml 추가 2025.09.30
                                     , C_DATA.WATER_BOX                                              AS USE_LT_CNT       --사용포인트
                                     , SYSDATE                                                       AS CHKDATE          --최종수정시간
                               FROM   DUAL
