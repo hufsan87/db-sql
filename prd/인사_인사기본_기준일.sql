@@ -26,8 +26,16 @@
              --   AS "최초입사일",
              TO_CHAR (TO_DATE (K.GEMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
                  AS "그룹입사일",
-             TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
-                 AS "소속입사일",
+             --TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
+             --    AS "소속입사일",
+             CASE
+             WHEN K.ENTER_CD='KS'
+             THEN (
+                SELECT  TO_CHAR(TO_DATE(NVL(ZZ.YEAR_YMD, ZZ.GEMP_YMD),'YYYYMMDD'), 'YYYY-MM-DD') FROM THRM100 ZZ WHERE ZZ.ENTER_CD='KS' AND ZZ.SABUN=K.SABUN
+                )                
+             ELSE
+                TO_CHAR (TO_DATE (K.EMP_YMD, 'YYYYMMDD'), 'YYYY-MM-DD')
+             END AS "소속입사일",
              F_COM_GET_CAREER_CNT (K.ENTER_CD,
                                    K.SABUN,
                                    'W',
@@ -225,7 +233,7 @@
                  NVL (REPLACE ('@viewSearchDate@', '-', ''),
                       TO_CHAR (SYSDATE, 'YYYYMMDD')))
                  AS "나이",
-             K.WED_YN
+             DECODE(K.WED_YN,'MSS_KOR_01','기혼','MSS_KOR_02','미혼',K.WED_YN)
                  AS "결혼여부",
              K.WED_YMD
                  AS "결혼일자",
