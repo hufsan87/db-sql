@@ -232,7 +232,7 @@ CREATE OR REPLACE FORCE EDITIONABLE VIEW "PAWS_HG_PRD"."인사_인사기본_기�
                  NVL (REPLACE ('@viewSearchDate@', '-', ''),
                       TO_CHAR (SYSDATE, 'YYYYMMDD')))
                  AS "나이",
-             K.WED_YN
+             DECODE(K.WED_YN,'MSS_KOR_01','기혼','MSS_KOR_02','미혼',K.WED_YN)
                  AS "결혼여부",
              K.WED_YMD
                  AS "결혼일자",
