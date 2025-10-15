@@ -626,7 +626,8 @@ BEGIN
 										AND (A3.PAY_CNT >(SELECT (MAX(X.CHD_YY_CNT) + 1) * 12
 																	 		 FROM TBEN550 X
 																			WHERE X.ENTER_CD = P_ENTER_CD
-																	  		AND A2.APPL_YMD BETWEEN X.SDATE AND X.EDATE)
+                                                                                --AND A2.APPL_YMD BETWEEN X.SDATE AND X.EDATE)
+                                                                                AND TO_CHAR(SYSDATE,'YYYYMMDD') BETWEEN X.SDATE AND X.EDATE)
 													OR (TRUNC(MONTHS_BETWEEN(SYSDATE, TO_DATE(A1.CHD_BIRTH,'YYYYMMDD')) /12) = 72)
 													)
 										) B1
