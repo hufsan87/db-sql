@@ -248,7 +248,7 @@ BEGIN
             /* -- 건강보험 급여공제방식(C:공단자료연계) */
             IF lv_ben_cal_type = 'C' THEN
                BEGIN
-                IF P_ENTER_CD IN ('HX','TP') THEN -- 한진정보통신, 공단자료(사번) 업로드 이용, (2025.05.16)TP 추가
+                IF P_ENTER_CD IN ('TP') THEN -- 한진정보통신, 공단자료(사번) 업로드 이용, (2025.05.16)TP 추가
                   INSERT INTO TBEN777
                   (
                           ENTER_CD --회사구분(TORG900)
@@ -865,7 +865,7 @@ BEGIN
             /* -- 국민연금 급여공제방식(C:공단자료연계) */
             IF lv_ben_cal_type = 'C' THEN
                BEGIN
-                IF P_ENTER_CD in ('HX','TP') THEN -- 한진정보통신, 공단자료(사번) 업로드 이용 20250618 토파스TP 추가
+                IF P_ENTER_CD in ('TP') THEN -- 한진정보통신, 공단자료(사번) 업로드 이용 20250618 토파스TP 추가
                   INSERT INTO TBEN777
                   (
                           ENTER_CD --회사구분(TORG900)
@@ -1625,6 +1625,8 @@ BEGIN
         WHEN '76' THEN
         	P_BEN_PAY_DATA_CRE_LIST(P_SQLCODE, P_SQLERRM, P_ENTER_CD, lv_cpn201, P_BENEFIT_BIZ_CD, P_BUSINESS_PLACE_CD, P_CHKID);
         WHEN '77' THEN
+        	P_BEN_PAY_DATA_CRE_LIST(P_SQLCODE, P_SQLERRM, P_ENTER_CD, lv_cpn201, P_BENEFIT_BIZ_CD, P_BUSINESS_PLACE_CD, P_CHKID);
+        WHEN '81' THEN
         	P_BEN_PAY_DATA_CRE_LIST(P_SQLCODE, P_SQLERRM, P_ENTER_CD, lv_cpn201, P_BENEFIT_BIZ_CD, P_BUSINESS_PLACE_CD, P_CHKID);
         WHEN '85' THEN
         	P_BEN_PAY_DATA_CRE_LIST(P_SQLCODE, P_SQLERRM, P_ENTER_CD, lv_cpn201, P_BENEFIT_BIZ_CD, P_BUSINESS_PLACE_CD, P_CHKID);
