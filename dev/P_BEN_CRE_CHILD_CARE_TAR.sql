@@ -56,13 +56,13 @@ IS
                AND A.ENTER_CD = B.ENTER_CD
                AND A.APPL_SEQ = B.APPL_SEQ
                AND B.APPL_STATUS_CD = '99'
-               AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'99991231'))
+               AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'999912'))
                AND (A.PAY_STS = 'P' OR 
                     (A.PAY_STS = 'S' AND (
                         -- 변경 '25.05.29
 --                                        NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND 
 --                                        P_TAR_YM < NVL(A.USE_E_YM, A.USE_M_YM)
-                                          P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM, '99991231')
+                                          P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM, '999912')
                                           AND (A.USE_M_YM IS NULL 
                                                OR (
                                                  A.USE_M_YM>P_TAR_YM
