@@ -62,7 +62,7 @@ IS
                         -- 변경 '25.05.29
 --                                        NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND 
 --                                        P_TAR_YM < NVL(A.USE_E_YM, A.USE_M_YM)
-                                          P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                                          P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM, '99991231')
                                           AND (A.USE_M_YM IS NULL 
                                                OR (
                                                  A.USE_M_YM>P_TAR_YM
@@ -402,7 +402,9 @@ BEGIN
                         --AND (A.USE_S_YM <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,'99991231'))
                         --AND (A.PAY_STS = 'P' OR ( A.PAY_STS = 'S' AND ( NVL(A.USE_MS_YM, A.USE_S_YM) <= P_TAR_YM AND P_TAR_YM < NVL(A.USE_E_YM,A.USE_M_YM))))
                         -- 추가 '25.05.29
-                        AND P_TAR_YM BETWEEN A.USE_S_YM AND A.USE_E_YM
+                        --AND P_TAR_YM BETWEEN A.USE_S_YM AND NVL(A.USE_E_YM, '999912')
+                        --종료년월 부터, 대상에서 제외되어야 함 25.10.20
+                        AND P_TAR_YM BETWEEN A.USE_S_YM AND TO_CHAR(ADD_MONTHS(TO_DATE(NVL(A.USE_E_YM, '999912')||'01','YYYYMMDD'), -1),'YYYYMM') 
                         AND (A.USE_M_YM IS NULL 
                              OR (
                                A.USE_M_YM>P_TAR_YM
@@ -600,6 +602,8 @@ BEGIN
 		UPDATE TBEN551 A1
 		SET A1.USE_E_YM = TO_CHAR(ADD_MONTHS(TO_DATE(P_TAR_YM, 'YYYYMM'), 1), 'YYYYMM') -- 중단년월
 			, A1.PAY_STS = 'F'
+            , A1.CHKDATE = SYSDATE
+		   	, A1.CHKID  = 'PRC_CHD_TAR'
 		WHERE EXISTS(
 						SELECT 1
 						FROM (SELECT A1.ENTER_CD
@@ -624,7 +628,8 @@ BEGIN
 										AND (A3.PAY_CNT >(SELECT (MAX(X.CHD_YY_CNT) + 1) * 12
 																	 		 FROM TBEN550 X
 																			WHERE X.ENTER_CD = P_ENTER_CD
-																	  		AND A2.APPL_YMD BETWEEN X.SDATE AND X.EDATE)
+                                                                                --AND A2.APPL_YMD BETWEEN X.SDATE AND X.EDATE)
+                                                                                AND TO_CHAR(SYSDATE,'YYYYMMDD') BETWEEN X.SDATE AND X.EDATE)
 													OR (TRUNC(MONTHS_BETWEEN(SYSDATE, TO_DATE(A1.CHD_BIRTH,'YYYYMMDD')) /12) = 72)
 													)
 										) B1
